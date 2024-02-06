@@ -1,63 +1,62 @@
 package org.example.models
 
-data class Board(val tiles: Array<Array<Tile>>, val equipment: Map<Coords, Equipment>? ) {
-    //TODO make a simple 9 por 18 board
-    //TODO set the entrances list and the exits list
-    val entries: MutableList<Coords> = mutableListOf()
-    val exits : MutableList<Coords> = mutableListOf()
+import java.io.File
 
-    init {
-        //run through the tiles and save all entries to the list
-
-        //Por cada row fazer,
-        tiles.forEachIndexed { rowIdx, row ->
-            //Por cada col fazer,
-
-            row.forEachIndexed { colIdx, col ->
-                //Se o tile == Entry
-
-                if (tiles[rowIdx][colIdx] == Tile.Entry)
-                //Guardar tile entry
-                    entries.add(Coords(rowIdx, colIdx))
-
-                if (tiles[rowIdx][colIdx] == Tile.Exit)
-                //Guardar tile exit
-                    exits.add(Coords(rowIdx, colIdx))
-            }
-        }
-    }
+data class Board(
+    val tiles: List<Tile>,
+    val entries: List<Coords> = getEntries(tiles),
+    val exits : List<Coords> = getExits(tiles),
+    val equipment: Map<Coords, Equipment> = mapOf()
+) {
     fun visualization() {
-        for (row in this.tiles) {
-            for (tile in row) {
-                print(when (tile) {
-                    Tile.Wall ->"1"
-                    Tile.Floor ->"2"
-                    Tile.Entry ->"3"
-                    Tile.Exit ->"4"
-                })
-            }
-            println()
+        for (tile in tiles)
+            tile.type.printTile()
+    }
+
+    companion object {
+        fun fromFile(path: File): Board {
+            TODO("Implement David")
         }
-    }
 
+        fun toFile(path: File): Board {
+            TODO("Implement David")
+        }
 
+        private fun getEntries(tiles: List<Tile>): List<Coords> {
+            val entries = mutableListOf<Coords>()
+            for (tile in tiles)
+                if (tile.type == Tile.Type.Entry)
+                    entries.add(tile.coords)
+            return entries
+        }
+        private fun getExits(tiles: List<Tile>): List<Coords> {
+            val exits = mutableListOf<Coords>()
+            for (tile in tiles)
+                if (tile.type == Tile.Type.Entry)
+                    exits.add(tile.coords)
+            return exits
+        }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
+        fun getTiles(numRows: Int, numCols: Int, walls: List<Coords>, entries: List<Coords>, exits: List<Coords>): List<Tile> {
+            val tiles = mutableListOf<Tile>()
+            for (row in 0 until numRows) {
+                for (col in 0 until numCols) {
+                    val coords = Coords(row, col)
+                    val type = when {
+                        walls.contains(coords) -> Tile.Type.Wall
+                        entries.contains(coords) -> Tile.Type.Entry
+                        exits.contains(coords) -> Tile.Type.Exit
+                        else -> Tile.Type.Floor
+                    }
+                    tiles.add(Tile(coords, type))
+                }
+            }
+            return tiles
+        }
 
-        other as Board
-
-        if (!tiles.contentDeepEquals(other.tiles)) return false
-        if (equipment != other.equipment) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = tiles.contentDeepHashCode()
-        result = 31 * result + equipment.hashCode()
-        return result
+        fun randomEquipment(tiles: List<Tile>, percentageOfEquipment: Int): Map<Coords, Equipment> {
+            TODO("Implement David")
+        }
     }
 }
 
