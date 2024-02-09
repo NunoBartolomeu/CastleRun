@@ -1,0 +1,23 @@
+Offense
+sword- declares an atack action to an enemy piece in nearby tile
+axe- declare an atack action once on any enemy piece
+bow- declare an atack action on any enemy piece in a 5 tile distance in any direction
+dagger- if ur in the same tile as an enemy piece instantly kill once
+
+
+
+utility
+boots- throw an extra dice for movement
+goat- leaves a goat on the current tile if an enemy piece passes through they must declare a atack action on the goat if they lose they lose that piece
+robe- ignore any piece or action declared besides movement
+cape- make one power up on the map disappear
+
+defense
+shield- fully deny one single atack action
+chestplate- plus 2 to ur defensive dice throws in case an enemy declares an atack action
+helm- immunity to bow
+
+
+
+definitions
+atack action- throw dice whoever gets the higher number wins
