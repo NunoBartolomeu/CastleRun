@@ -7,17 +7,6 @@ import org.example.models.items.Item
 import org.example.toJson
 import java.io.File
 
-fun newBoard(numRows: Int, numCols: Int, entries: List<Position>, exits: List<Position>, walls: List<Position>, item: Map<Position, Item>): Board {
-    val tiles = Board.getTiles(numRows, numCols, walls, entries, exits)
-    return Board(tiles, entries, exits, item)
-}
-
-fun newBoardWithRandomEquipment(numRows: Int, numCols: Int, entries: List<Position>, exits: List<Position>, walls: List<Position>, percentageOfEquipment: Int): Board {
-    val tiles = Board.getTiles(numRows, numCols, walls, entries, exits)
-    val equipment = Board.randomEquipment(tiles, percentageOfEquipment)
-    return Board(tiles, entries, exits, equipment)
-}
-
 fun boardFromFile(file: File): Board {
     if (!file.isFile)
         throw IllegalArgumentException("Path needs to be a file")

@@ -22,10 +22,6 @@ enum class Direction {
             "SW" -> SouthWest
             else -> throw IllegalArgumentException("Invalid direction: $value")
         }
-
-        fun getNESW(): List<Direction> {
-            return listOf(North, East, South, West)
-        }
     }
 
     override fun toString(): String {
@@ -38,6 +34,19 @@ enum class Direction {
             NorthWest -> "NW"
             SouthEast -> "SE"
             SouthWest -> "SW"
+        }
+    }
+
+    fun toPosition(): Position {
+        return when (this) {
+            North -> Position(-1, 0)
+            East -> Position(0, 1)
+            South -> Position(1, 0)
+            West -> Position(0, -1)
+            NorthEast -> Position(-1, 1)
+            NorthWest -> Position(-1, -1)
+            SouthEast -> Position(1, 1)
+            SouthWest -> Position(1, -1)
         }
     }
 }

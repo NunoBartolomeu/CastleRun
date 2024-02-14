@@ -1,5 +1,7 @@
 package org.example.models.board
 
+import models.board.Neighbour
+
 open class MutableBoard(
     val numRows: Int,
     val numCols: Int,
@@ -12,7 +14,9 @@ open class MutableBoard(
     }
 
     fun getTile(position: Position) = getTile(position.row, position.col)
-    fun getTile(row: Int, col: Int) = tiles[row][col]
+    fun getTile(row: Int, col: Int): Tile? {
+        return if (row < 0 || row >= numRows || col < 0 || col >= numCols) null else tiles[row][col]
+    }
 
     fun changeTile(position: Position, type: Tile.Type) { tiles[position.row][position.col] = tiles[position.row][position.col].update(type) }
     fun changeTile(row: Int, col: Int, type: Tile.Type) { tiles[row][col] = tiles[row][col].update(type) }
@@ -47,5 +51,56 @@ open class MutableBoard(
         repeat(numExits) { setRandomExit() }
     }
 
-    
+    fun getEntries() = tiles.flatten().filter { it.type == Tile.Type.ENTRY }
+    fun getExits() = tiles.flatten().filter { it.type == Tile.Type.EXIT }
+
+    fun getEntriesAndExits() = getEntries() + getExits()
+
+    fun getNeighbor(tile: Tile, direction: Direction): Neighbour? {
+        val n = getTile(tile.position + direction.toPosition()) ?: return null
+        return Neighbour(n, direction)
+    }
+
+    /**
+     * Gets North, South, West and East
+     * */
+    fun getNeighbors(tile: Tile): List<Neighbour> {
+        return listOfNotNull(
+            getNeighbor(tile, Direction.North),
+            getNeighbor(tile, Direction.East),
+            getNeighbor(tile, Direction.South),
+            getNeighbor(tile, Direction.West)
+        )
+    }
+
+    fun getDiagonalNeighbors(tile: Tile): List<Neighbour> {
+        return listOfNotNull(
+            getNeighbor(tile, Direction.NorthEast),
+            getNeighbor(tile, Direction.SouthEast),
+            getNeighbor(tile, Direction.SouthWest),
+            getNeighbor(tile, Direction.NorthWest)
+        )
+    }
+
+    fun getAllNeighbors(tile: Tile): List<Neighbour> {
+        return getNeighbors(tile) + getDiagonalNeighbors(tile)
+    }
+
+    fun toBoard(): Board {
+        return Board(numRows, numCols, tiles)
+    }
+
+    fun print(showVoid: Boolean = false) {
+        for (row in 0 until numRows) {
+            for (col in 0 until numCols) {
+                val tile = tiles[row][col]
+                if (tile.type == Tile.Type.VOID && !showVoid) {
+                    print(" ")
+                } else {
+                    print("${tile.type.value()}")
+                }
+            }
+            println()
+        }
+    }
 }

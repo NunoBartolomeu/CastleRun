@@ -1,3 +1,6 @@
+package models.board
 
+import org.example.models.board.Direction
+import org.example.models.board.Tile
 
-data class Neighbor(val tile: Tile, val direction: Direction)
+data class Neighbour(val tile: Tile, val direction: Direction)
