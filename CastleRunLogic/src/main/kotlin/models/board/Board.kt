@@ -10,7 +10,6 @@ data class Board(
     val exits: List<Position> = getExits(tiles),
     val items: Map<Position, Item> = getItems(tiles)
 ) {
-
     companion object {
         private fun getEntries(tiles: Array<Array<Tile>>): List<Position> {
             TODO("David Implementa")

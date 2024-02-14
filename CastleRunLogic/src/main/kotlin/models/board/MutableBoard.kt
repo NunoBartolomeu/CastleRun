@@ -14,17 +14,38 @@ open class MutableBoard(
     fun getTile(position: Position) = getTile(position.row, position.col)
     fun getTile(row: Int, col: Int) = tiles[row][col]
 
-    fun updateTile(position: Position, type: Tile.Type) { tiles[position.row][position.col] = tiles[position.row][position.col].update(type) }
-    fun updateTile(row: Int, col: Int, type: Tile.Type) { tiles[row][col] = tiles[row][col].update(type) }
+    fun changeTile(position: Position, type: Tile.Type) { tiles[position.row][position.col] = tiles[position.row][position.col].update(type) }
+    fun changeTile(row: Int, col: Int, type: Tile.Type) { tiles[row][col] = tiles[row][col].update(type) }
 
     fun fillOuterWalls() {
         for (i in 0 until numCols) {
-            updateTile(0, i, Tile.Type.WALL)
-            updateTile(numRows - 1, i, Tile.Type.WALL)
+            changeTile(0, i, Tile.Type.WALL)
+            changeTile(numRows - 1, i, Tile.Type.WALL)
         }
         for (i in 0 until numRows) {
-            updateTile(i, 0, Tile.Type.WALL)
-            updateTile(i, numCols - 1, Tile.Type.WALL)
+            changeTile(i, 0, Tile.Type.WALL)
+            changeTile(i, numCols - 1, Tile.Type.WALL)
         }
     }
+
+    private fun getRandomPosition(): Position {
+        val row = (0 until numRows - 1).random()
+        val col = (0 until numCols - 1).random()
+        return Position(row, col)
+    }
+
+    private fun setRandomEntry() {
+        changeTile(getRandomPosition(), Tile.Type.ENTRY)
+    }
+    
+    private fun setRandomExit() {
+        changeTile(getRandomPosition(), Tile.Type.EXIT)
+    }
+    
+    fun setRandomEntriesAndExits(numEntries: Int, numExits: Int) {
+        repeat(numEntries) { setRandomEntry() }
+        repeat(numExits) { setRandomExit() }
+    }
+
+    
 }
