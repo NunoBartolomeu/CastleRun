@@ -1,13 +1,10 @@
 package org.example.logic
 
-import org.example.toObject
 import org.example.models.board.Board
-import org.example.models.board.Position
-import org.example.models.items.Item
-import org.example.toJson
+import org.example.models.board.Tile
 import java.io.File
 
-fun boardFromFile(file: File): Board {
+fun boardFromFile(file: File): Board<Tile> {
     if (!file.isFile)
         throw IllegalArgumentException("Path needs to be a file")
     if (file.extension == ".txt")
@@ -17,7 +14,7 @@ fun boardFromFile(file: File): Board {
     return json.toObject()
 }
 
-fun boardToFile(board: Board, file: File) {
+fun boardToFile(board: Board<Tile>, file: File) {
     val json = board.toJson()
     file.writeText(json)
 }

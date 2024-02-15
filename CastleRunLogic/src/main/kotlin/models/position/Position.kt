@@ -1,4 +1,4 @@
-package org.example.models.board
+package org.example.models.position
 
 data class Position(val row: Int, val col: Int) {
     operator fun plus(position: Position): Position {

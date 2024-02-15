@@ -1,45 +1,31 @@
 package org.example.models.board
 
-import org.example.models.items.Item
+import org.example.models.position.Direction
+import org.example.models.position.Position
 
-data class Board(
-    val numRows: Int,
-    val numCols: Int,
-    val tiles: Array<Array<Tile>>,
-    val entries: List<Position> = getEntries(tiles),
-    val exits: List<Position> = getExits(tiles),
-    val items: Map<Position, Item> = getItems(tiles)
-) {
-    companion object {
-        private fun getEntries(tiles: Array<Array<Tile>>): List<Position> {
-            val entries = mutableListOf<Position>()
-            for (row in 0 until tiles.size) {
-                for (col in 0 until tiles[0].size) {
-                    if (tiles[row][col].type == Tile.Type.ENTRY) {
-                        entries.add(Position(row, col))
-                    }
-                }
-            }
-            return entries
-        }
+open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
+    val numRows: Int = tiles.size
+    val numCols: Int = tiles[0].size
+    val entries: List<Position> = tiles.flatten().filter { it.type == Tile.Type.ENTRY }.map { it.position }
+    val exits: List<Position> = tiles.flatten().filter { it.type == Tile.Type.EXIT }.map { it.position }
+    //val items
 
-        private fun getExits(tiles: Array<Array<Tile>>): List<Position> {
-            val exits = mutableListOf<Position>()
-            for (row in 0 until tiles.size) {
-                for (col in 0 until tiles[0].size) {
-                    if (tiles[row][col].type == Tile.Type.EXIT) {
-                        exits.add(Position(row, col))
-                    }
-                }
-            }
-            return exits
-        }
+    fun inbounds(row: Int, col: Int) = row in 0 until numRows && col in 0 until numCols
+    fun inbounds(position: Position) = inbounds(position.row, position.col)
 
-        private fun getItems(tiles: Array<Array<Tile>>): Map<Position, Item> {
-            val items = mutableMapOf<Position, Item>()
-            return items
+    fun getTile(row: Int, col: Int): Tile? = if (inbounds(row, col)) tiles[row][col] else null
+    fun getTile(position: Position) = getTile(position.row, position.col)
+
+    fun getNeighbor(position: Position, direction: Direction): Tile? = getTile(position + direction.asPosition())
+    fun getNeighbor(tile: Tile, direction: Direction): Tile? = getNeighbor(tile.position, direction)
+
+    fun getNeighbors(position: Position): List<Pair<Tile, Direction>> {
+        return Direction.entries.mapNotNull { direction ->
+            return@mapNotNull getNeighbor(position, direction)?.let { neighbor -> neighbor to direction }
         }
     }
+
+    fun getRandomPosition(): Position = Position((0 until numRows).random(), (0 until numCols).random())
 
     fun print(showVoid: Boolean = false) {
         for (row in 0 until numRows) {
@@ -48,7 +34,7 @@ data class Board(
                 if (tile.type == Tile.Type.VOID && !showVoid) {
                     print("  ")
                 } else {
-                    print("${tile.type.value()}")
+                    print("${tile.type.value}")
                 }
             }
             println()
