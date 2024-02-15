@@ -1,16 +1,23 @@
 package org.example.logic
 
-import org.example.models.Board
-import org.example.models.Coords
-import org.example.models.Equipment
+import org.example.toObject
+import org.example.models.board.Board
+import org.example.models.board.Position
+import org.example.models.items.Item
+import org.example.toJson
+import java.io.File
 
-fun newBoard(numRows: Int, numCols: Int, entries: List<Coords>, exits: List<Coords>, walls: List<Coords>, equipment: Map<Coords, Equipment>): Board {
-    val tiles = Board.getTiles(numRows, numCols, walls, entries, exits)
-    return Board(tiles, entries, exits, equipment)
+fun boardFromFile(file: File): Board {
+    if (!file.isFile)
+        throw IllegalArgumentException("Path needs to be a file")
+    if (file.extension == ".txt")
+        throw IllegalArgumentException("File needs to end in \'.txt\'")
+
+    val json = file.readText()
+    return json.toObject()
 }
 
-fun newBoardWithRandomEquipment(numRows: Int, numCols: Int, entries: List<Coords>, exits: List<Coords>, walls: List<Coords>, percentageOfEquipment: Int): Board {
-    val tiles = Board.getTiles(numRows, numCols, walls, entries, exits)
-    val equipment = Board.randomEquipment(tiles, percentageOfEquipment)
-    return Board(tiles, entries, exits, equipment)
+fun boardToFile(board: Board, file: File) {
+    val json = board.toJson()
+    file.writeText(json)
 }

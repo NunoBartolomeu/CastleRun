@@ -1,0 +1,7 @@
+# CastleRun
+
+## Package
+```
+./gradlew distZip
+```
+
