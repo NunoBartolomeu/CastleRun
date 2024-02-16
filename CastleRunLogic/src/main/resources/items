@@ -1,7 +1,7 @@
 Offense
-sword- declares an atack action to an enemy piece in nearby tile
-axe- declare an atack action once on any enemy piece
-bow- declare an atack action on any enemy piece in a 5 tile distance in any direction
+sword- declares an atack action to an enemy piece ur max range is determined by a dice throw, doesnt ignore walls
+axe- declare an atack action once on any enemy piece if you do a dice throw higher or equal to 4
+bow- declare an atack action on any enemy piece u throw a dice to hit on that specific range can hit throught walls
 dagger- if ur in the same tile as an enemy piece instantly kill once
 
 
@@ -13,11 +13,11 @@ robe- ignore any piece or action declared besides movement
 cape- make one power up on the map disappear
 
 defense
-shield- fully deny one single atack action
+shield- fully deny one single atack action during enemy turn once
 chestplate- plus 2 to ur defensive dice throws in case an enemy declares an atack action
 helm- immunity to bow
 
 
 
 definitions
-atack action- throw dice whoever gets the higher number wins
+atack action- garenteed kill low range
