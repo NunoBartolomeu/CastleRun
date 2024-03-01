@@ -1,6 +1,6 @@
 package org.example.models.board
 
-import org.example.models.position.Position
+import org.example.models.board.position.Position
 
 class MutableBoard(numRows: Int, numCols: Int): Board<MutableTile>(voidBoard(numRows, numCols)) {
     companion object {

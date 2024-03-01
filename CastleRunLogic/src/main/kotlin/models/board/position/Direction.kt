@@ -1,4 +1,4 @@
-package org.example.models.position
+package org.example.models.board.position
 
 enum class Direction { N, E, S, W, NE, NW, SE, SW;
     fun asPosition(): Position {

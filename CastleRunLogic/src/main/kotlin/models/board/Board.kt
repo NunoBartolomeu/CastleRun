@@ -1,7 +1,7 @@
 package org.example.models.board
 
-import org.example.models.position.Direction
-import org.example.models.position.Position
+import org.example.models.board.position.Direction
+import org.example.models.board.position.Position
 
 open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
     val numRows: Int = tiles.size
@@ -26,6 +26,14 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
     }
 
     fun getRandomPosition(): Position = Position((0 until numRows).random(), (0 until numCols).random())
+
+    fun getAllTilesAt(tile: Tile, distance: Int) {
+        val allPositionsAtDistance = tile.position.positionsAtDistance(distance)
+        
+        return allPositionsAtDistance.mapNotNull { position ->
+            return@mapNotNull getTile(position)
+        }
+    }
 
     fun print(showVoid: Boolean = false) {
         for (row in 0 until numRows) {

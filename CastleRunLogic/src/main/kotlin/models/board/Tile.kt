@@ -1,6 +1,6 @@
 package org.example.models.board
 
-import org.example.models.position.Position
+import org.example.models.board.position.Position
 
 open class Tile(val position: Position, open val type: Type) {
 

@@ -1,4 +1,4 @@
-package org.example.models.items
+package org.example.models.player
 
 data class Item(val mainClazz: Clazz, val type: Type) {
     enum class Clazz { Utility, Defense, Offense }
