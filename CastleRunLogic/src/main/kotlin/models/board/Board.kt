@@ -27,7 +27,7 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
 
     fun getRandomPosition(): Position = Position((0 until numRows).random(), (0 until numCols).random())
 
-    fun getAllTilesAt(tile: Tile, distance: Int) {
+    fun getAllTilesAt(tile: Tile, distance: Int): List<Tile> {
         val allPositionsAtDistance = tile.position.positionsAtDistance(distance)
         
         return allPositionsAtDistance.mapNotNull { position ->
@@ -35,14 +35,23 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
         }
     }
 
-    fun print(showVoid: Boolean = false) {
+    fun print(showVoid: Boolean = false, showPretty: Boolean = true) {
         for (row in 0 until numRows) {
             for (col in 0 until numCols) {
                 val tile = tiles[row][col]
                 if (tile.type == Tile.Type.VOID && !showVoid) {
-                    print("  ")
+                    print(" ")
                 } else {
-                    print("${tile.type.value}")
+                    if (showPretty)
+                        when(tile.type) {
+                            Tile.Type.VOID -> print(" ")
+                            Tile.Type.ENTRY -> print("⚐")
+                            Tile.Type.EXIT -> print("⚑")
+                            Tile.Type.WALL -> print("⍁")
+                            Tile.Type.FLOOR -> print(" ")
+                        }
+                    else
+                        print("${tile.type.value}")
                 }
             }
             println()
