@@ -1,10 +1,13 @@
 package org.example.client
 
 import org.example.logic.boardFromFile
+import org.example.models.Game
+import org.example.models.GameRules
+import org.example.models.player.Player
 import java.io.File
 
 fun main() {
-    val boardFile = File("src/main/resources/boards/Board1.txt")
+    val boardFile = File("src/main/resources/boards/Board2.txt")
     println(boardFile.absolutePath)
     val board = boardFromFile(boardFile)
     board.print()
@@ -14,4 +17,9 @@ fun main() {
     val rules = GameRules()
     
     val game = Game(board, players, rules)
+
+
+
+    game.deploy(p1, at)
+    game.move(p1.username, from, to)
 }

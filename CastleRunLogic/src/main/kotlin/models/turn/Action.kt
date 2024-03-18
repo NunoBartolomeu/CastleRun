@@ -7,7 +7,7 @@ import org.example.models.board.position.Position
 sealed class BaseAction(val message: String)
 
 class RollDiceAction(val player: String, val dice: Dice): 
-    BaseAction("The $player rolled the dice ${dice.id} and got ${dice.values}")
+    BaseAction("The $player rolled the dice ${dice.used} and got ${dice.values}")
 class MoveAction(val player: String, val from: Position, val to: Position):
     BaseAction("The $player moved the piece from $from to $to")
 class DeployAction(val player: String, val at: Position):

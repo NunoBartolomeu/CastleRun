@@ -12,40 +12,42 @@ import org.example.models.turn.Turn
 data class Game(val board: Board<Tile>, val players: List<Player>, val rules: GameRules, val turns: MutableList<Turn> = mutableListOf()) {
     val currTurn: Turn get() = turns.last()
     var currPlayer: String = players[0].username
-    var state: State = State.Roll
-
-    enum class State { Roll, MoveOrDeploy, DuelRoll, DuelSelectAlly, DuelSelectEnemy, EndTurn }
-
-    
 
     fun rollDices(player: String) {
         if (player != currPlayer) throw Exception("It's not your turn")
-        if (state != State.Roll && state != State.DuelRoll) throw Exception("You can't roll the dices right now")
         if (currTurn.dices.isNotEmpty()) throw Exception("You already rolled the dices")
 
         val dice = Dice(player, rules.numDicesToMove, false)
         currTurn.dices.add(dice)
         currTurn.actions.add(RollDiceAction(player, dice))
-
-        state = State.MoveOrDeploy
     }
 
     fun move(player: String, from: Position, to: Position) {
         if (player != currPlayer) throw Exception("It's not your turn")
-        if (state != State.MoveOrDeploy) throw Exception("You can't move a piece right now")
         if (currTurn.dices.isEmpty()) throw Exception("You need to roll the dices first")
 
         val piece = getPieceAt(from) ?: throw Exception("There's no piece in the position $from")
         if (piece.player != player) throw Exception("You can't move the enemy's piece")
 
         val dice = currTurn.dices.last()
-        val distance = from.distance(to)
+        val distance = from.distanceTo(to)
         if (dice.used.all { it }) throw Exception("You already used all the dices")
         if (distance !in dice.values) throw Exception("You can't move the piece $distance tiles")
 
-        board.movePiece(from, to)
         currTurn.actions.add(RollDiceAction(player, dice))
         dice.use(distance)
+    }
+
+    fun deploy() {
+        TODO()
+    }
+
+    fun challenge() {
+        TODO()
+    }
+
+    fun useItem() {
+        TODO()
     }
 
     private fun getPieceAt(position: Position): Piece? {
