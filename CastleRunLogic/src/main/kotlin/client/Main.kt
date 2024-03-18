@@ -8,4 +8,10 @@ fun main() {
     println(boardFile.absolutePath)
     val board = boardFromFile(boardFile)
     board.print()
+    val p1 = Player("Player 1")
+    val p2 = Player("Player 2")
+    val players = listOf(p1, p2)
+    val rules = GameRules()
+    
+    val game = Game(board, players, rules)
 }

@@ -19,7 +19,7 @@ data class Player(val username: String) {
     }
 
     fun deployPiece(at: Position) {
-        pieces.add(Piece(at))
+        pieces.add(Piece(username, at))
     }
 
     fun killPiece(at: Position) {

@@ -1,5 +1,6 @@
 package org.example.models.board
 
+import Node
 import org.example.models.board.position.Direction
 import org.example.models.board.position.Position
 
@@ -33,6 +34,28 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
         return allPositionsAtDistance.mapNotNull { position ->
             return@mapNotNull getTile(position)
         }
+    }
+
+    fun getTree(start: Position, distance: Int): Node? {
+        return getNode(start, null, distance)
+    }
+
+    private fun getNode(position: Position, previous: Position?, distance: Int): Node? {
+        if (inbounds(position) || distance < 0 || tiles[position.row][position.col].type == Tile.Type.ENTRY)
+            return null
+
+        if (distance == 0 || tiles[position.row][position.col].type == Tile.Type.EXIT)
+            return Node(position, previous, null, distance)
+
+        val next = mutableListOf<Node>()
+        val neighbors = getNeighbors(position)
+
+        for (n in neighbors) {
+            val node = getNode(n.first.position, position, distance - 1)
+            if (node != null) next.add(node)
+        }
+
+        return Node(position, previous, next, distance)
     }
 
     fun print(showVoid: Boolean = false, showPretty: Boolean = true) {

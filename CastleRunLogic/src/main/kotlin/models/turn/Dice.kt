@@ -2,7 +2,16 @@ package org.example.models.turn
 
 import org.example.logic.random
 
-class Dice(val id: Identifier, val player: String, numberOfDices: Int) {
-    enum class Identifier { Move, Duel, Item }
-    val values: Array<Int> = (1..numberOfDices).map { random(1, 6) }.toTypedArray()
+class Dice(val player: String, numberOfDices: Int, val isDuel: Boolean) {
+    val values: Array<Int> = (1..numberOfDices).map {0}.toTypedArray()
+    val wasRolled: Boolean get() = values.all { it != 0 }
+    val used: Array<Boolean> = (1..numberOfDices).map {false}.toTypedArray()
+
+    fun roll() {
+        values.indices.forEach { values[it] = random(1, 6) }
+    }
+
+    fun use(index: Int) {
+        used[index] = true
+    }
 }

@@ -1,6 +1,8 @@
+import org.example.models.board.position.Position
+
 data class Node(
     val position: Position,
-    val previous: Node?,
-    val next: MutableList<Node>,
+    val previous: Position?,
+    val next: MutableList<Node>?,
     val distance: Int,
 )

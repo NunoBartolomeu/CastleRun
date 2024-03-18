@@ -1,12 +1,12 @@
 package org.example.models
 
 data class GameRules (
-    val numExitsToWin: Int,
-    val perfectExit: Boolean,
-    val lockedExits: Boolean,
-    val maxPieces: Int,
-    val maxActivePieces: Int,
-    val randomEquipment: Boolean,
-    val randomEquipmentByClass: Boolean,
-    val onlyOneWinner: Boolean,
+    val numExitsToWin: Int = 1,
+    val perfectExit: Boolean = false,
+    val lockedExits: Boolean = false,
+    val maxPieces: Int = 7,
+    val maxActivePieces: Int = 3,
+    val onlyOneWinner: Boolean = true,
+    val numDicesToMove: Int = 2,
+    val numDicesToDuel: Int = 1,
 )
