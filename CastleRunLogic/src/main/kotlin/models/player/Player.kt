@@ -3,7 +3,7 @@ package org.example.models.player
 import org.example.models.board.position.Position
 
 data class Player(val username: String) {
-    private val pieces: MutableList<Piece> = mutableListOf()
+    val pieces: MutableList<Piece> = mutableListOf()
     private val items: MutableList<Item> = mutableListOf()
     var piecesAtExit = 0
 

@@ -3,6 +3,7 @@ package org.example.models.board
 import Node
 import org.example.models.board.position.Direction
 import org.example.models.board.position.Position
+import org.example.models.player.Player
 
 open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
     val numRows: Int = tiles.size
@@ -58,26 +59,49 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
         return Node(position, previous, next, distance)
     }
 
-    fun print(showVoid: Boolean = false, showPretty: Boolean = true) {
+    fun print(showPretty: Boolean = true, players: List<Player> = emptyList()) {
+        //Print column numbers
+        print("\uD83D\uDD38")
+        for (col in 0 until numCols) {
+            print("${col%10}\uFE0F⃣")
+        }
+        println()
+
         for (row in 0 until numRows) {
+            //Print row numbers
+            print("${row%10}\uFE0F⃣")
+
             for (col in 0 until numCols) {
                 val tile = tiles[row][col]
-                if (tile.type == Tile.Type.VOID && !showVoid) {
-                    print(" ")
-                } else {
-                    if (showPretty)
-                        when(tile.type) {
-                            Tile.Type.VOID -> print(" ")
-                            Tile.Type.ENTRY -> print("⚐")
-                            Tile.Type.EXIT -> print("⚑")
-                            Tile.Type.WALL -> print("⍁")
-                            Tile.Type.FLOOR -> print(" ")
-                        }
-                    else
-                        print("${tile.type.value}")
-                }
+                if (showPretty)
+                    if (players.isNotEmpty() && players.any { it.pieces.any { it.position == tile.position } }) {
+                        printPiece(players.indexOfFirst { it.pieces.any { it.position == tile.position } })
+                    }
+                    else printTile(tile)
+                else
+                    print("${tile.type.value}")
             }
             println()
+        }
+    }
+
+    private fun printTile(tile: Tile) {
+        when(tile.type) {
+            Tile.Type.ENTRY -> print("\uD83C\uDD70\uFE0F")
+            Tile.Type.EXIT -> print("\uD83C\uDD71\uFE0F")
+            Tile.Type.WALL -> print("⬛")
+            Tile.Type.FLOOR -> print("\u2B1C")
+            Tile.Type.VOID -> print("\uD83D\uDD73\uFE0F")
+        }
+    }
+
+    private fun printPiece(playerIdx: Int) {
+        when(playerIdx) {
+            0 -> print("\uD83D\uDFE1")
+            1 -> print("\uD83D\uDFE2")
+            2 -> print("\uD83D\uDD35")
+            3 -> print("\uD83D\uDFE0")
+            else -> error("More than 4 players are not supported")
         }
     }
 }

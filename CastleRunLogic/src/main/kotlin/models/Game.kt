@@ -9,9 +9,20 @@ import org.example.models.turn.Dice
 import org.example.models.turn.RollDiceAction
 import org.example.models.turn.Turn
 
-data class Game(val board: Board<Tile>, val players: List<Player>, val rules: GameRules, val turns: MutableList<Turn> = mutableListOf()) {
+data class Game(val id: String = "TestGame", val board: Board<Tile>, val players: List<Player>, val rules: GameRules, val turns: MutableList<Turn> = mutableListOf()) {
     val currTurn: Turn get() = turns.last()
     var currPlayer: String = players[0].username
+
+    fun printGame() {
+        println("Game: $id")
+        println("Players: ${players.joinToString(", ") { it.username }}")
+        println()
+        board.print(players = players)
+    }
+
+    fun printRules() {
+        println("Rules: $rules")
+    }
 
     fun rollDices(player: String) {
         if (player != currPlayer) throw Exception("It's not your turn")
