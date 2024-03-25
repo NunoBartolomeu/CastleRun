@@ -39,10 +39,10 @@ data class Player(val username: String) {
 
     fun pieceReachedExit(piece: Piece) {
         piecesAtExit++
-        
     }
 
     fun pieceKilledAtExit(piece: Piece) {
-        piecesAtExit--
+        if(piecesAtExit >= 0) piecesAtExit--
+        else println("$username almost had -1 pieces.")
     }
 }

@@ -12,14 +12,11 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
     val exits: List<Position> = tiles.flatten().filter { it.type == Tile.Type.EXIT }.map { it.position }
     //val items
 
-    fun inbounds(row: Int, col: Int) = row in 0 until numRows && col in 0 until numCols
-    fun inbounds(position: Position) = inbounds(position.row, position.col)
+    fun inbounds(position: Position) = position.row in 0 until numRows && position.col in 0 until numCols
 
-    fun getTile(row: Int, col: Int): Tile? = if (inbounds(row, col)) tiles[row][col] else null
-    fun getTile(position: Position) = getTile(position.row, position.col)
+    fun getTile(position: Position): Tile? = if (inbounds(position)) tiles[position.row][position.col] else null
 
     fun getNeighbor(position: Position, direction: Direction): Tile? = getTile(position + direction.asPosition())
-    fun getNeighbor(tile: Tile, direction: Direction): Tile? = getNeighbor(tile.position, direction)
 
     fun getNeighbors(position: Position): List<Pair<Tile, Direction>> {
         return Direction.entries.mapNotNull { direction ->

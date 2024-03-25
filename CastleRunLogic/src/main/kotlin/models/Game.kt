@@ -1,15 +1,21 @@
 package org.example.models
 
+import org.example.logic.random
 import org.example.models.board.Board
 import org.example.models.board.Tile
 import org.example.models.board.position.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
-import org.example.models.turn.Dice
-import org.example.models.turn.RollDiceAction
-import org.example.models.turn.Turn
+import org.example.models.turn.*
 
-data class Game(val id: String = "TestGame", val board: Board<Tile>, val players: List<Player>, val rules: GameRules, val turns: MutableList<Turn> = mutableListOf()) {
+data class Game(
+    val id: String = "TestGame",
+    val board: Board<Tile>,
+    val players: List<Player>,
+    val rules: GameRules,
+    val turns: MutableList<Turn> = mutableListOf(),
+    val challengeNumber: Int = random(1, 6)
+) {
     val currTurn: Turn get() = turns.last()
     var currPlayer: String = players[0].username
 
@@ -24,6 +30,33 @@ data class Game(val id: String = "TestGame", val board: Board<Tile>, val players
         println("Rules: $rules")
     }
 
+    /**
+     * The point of decision for the action to be taken
+     * [player] The player who is doing a move
+     * [position] The list of positions (so to make it easier if there are multiple used)
+     * [enemyPlayer] The name of the enemy player in case it applies to the action
+     */
+    fun play(player: String, action: String, position: List<Position>, enemyPlayer: String) {
+        when(action) {
+            "rollDice" -> {
+                if(position.isNotEmpty()) throw Exception("Rolling the dice does not need positions")
+                rollDices(player)
+            }
+            "move" -> {
+                if(position.size != 2) throw Exception("Wrong number of positions for action move")
+                move(player, position[0], position[1])
+            }
+            "deploy" -> {
+                if(position.size != 1) throw Exception("Wrong number of positions for action deploy")
+                deploy(player, position[0])
+            }
+            "challenge" -> {
+                if(position.size != 2) throw Exception("Wrong number of positions for action challenge")
+                challenge(player, position[0], enemyPlayer, position[1])
+            }
+        }
+    }
+
     fun rollDices(player: String) {
         if (player != currPlayer) throw Exception("It's not your turn")
         if (currTurn.dices.isNotEmpty()) throw Exception("You already rolled the dices")
@@ -34,27 +67,81 @@ data class Game(val id: String = "TestGame", val board: Board<Tile>, val players
     }
 
     fun move(player: String, from: Position, to: Position) {
-        if (player != currPlayer) throw Exception("It's not your turn")
-        if (currTurn.dices.isEmpty()) throw Exception("You need to roll the dices first")
+        checkPlayerAndDice(player)
 
         val piece = getPieceAt(from) ?: throw Exception("There's no piece in the position $from")
         if (piece.player != player) throw Exception("You can't move the enemy's piece")
 
         val dice = currTurn.dices.last()
-        val distance = from.distanceTo(to)
         if (dice.used.all { it }) throw Exception("You already used all the dices")
+
+        val distance = from.distanceTo(to)
         if (distance !in dice.values) throw Exception("You can't move the piece $distance tiles")
 
-        currTurn.actions.add(RollDiceAction(player, dice))
+        val checkPosition = getPieceAt(to)
+        checkForPiece(player, checkPosition)
+
+        players.find { it.username == player }!!.movePiece(from, to)
         dice.use(distance)
+        currTurn.actions.add(MoveAction(player, from, to))
     }
 
-    fun deploy() {
-        TODO()
+    /**
+     * Deploys a new piece to the board
+     * [playerName] Player whose piece belongs to
+     * [to] Where the piece will be going to
+     */
+    fun deploy(playerName: String, to: Position) {
+        checkPlayerAndDice(playerName)
+
+        val dice = currTurn.dices.last()
+        if (dice.used.all { it }) throw Exception("You already used all the dices")
+
+        val checkPosition = getPieceAt(to)
+        checkForPiece(playerName, checkPosition)
+
+        val player = players.find { it.username == playerName }
+        if(player == null) throw Exception("Player not found")
+
+        player.deployPiece(to)
+        currTurn.actions.add(DeployAction(playerName, to))
     }
 
-    fun challenge() {
-        TODO()
+    /**
+     * Logic for the challenge mechanic of the game. This happens when a player gets a die that has
+     * the same number as the [challengeNumber] variable decided at the beginning of the game
+     * [player] The name of the player
+     * [piecePos] The position of the player's chosen piece
+     * [enemyPlayer] The name of the player challenged
+     * [enemyPiecePos] The position of the challenged player's chosen piece
+     */
+    fun challenge(player: String, piecePos: Position, enemyPlayer: String, enemyPiecePos: Position) {
+        checkPlayerAndDice(player)
+
+        val dice = currTurn.dices.last()
+        if(dice.values.all { it != challengeNumber }) throw Exception("You didn't get the challenge number")
+
+        val piece = getPieceAt(piecePos)
+        val enemyPiece = getPieceAt(enemyPiecePos)
+
+        if(piece == null || enemyPiece == null) throw Exception("Invalid piece selected")
+
+        val challengeDice = Dice(player, 1, true)
+        val challengeDiceEnemy = Dice(enemyPlayer, 1, true)
+        challengeDice.roll()
+        challengeDiceEnemy.roll()
+
+        if(challengeDice.values[0] >= challengeDiceEnemy.values[0]) {
+            players.find { (it.username == enemyPiece.player) }!!.killPiece(enemyPiece.position)
+        } else {
+            players.find { (it.username == piece.player) }!!.killPiece(piece.position)
+        }
+
+        currTurn.actions.add(DuelAction(player, piece, enemyPiece, 1))
+    }
+
+    private fun applyChallenge(winner: Piece, loser: Piece) {
+        TODO("Applies the result of a challenge")
     }
 
     fun useItem() {
@@ -66,6 +153,19 @@ data class Game(val id: String = "TestGame", val board: Board<Tile>, val players
             player.getPieceAt(position) ?: return@forEach
         }
         return null
+    }
+
+    private fun checkForPiece(player: String, piece: Piece?) {
+        if(piece != null) {
+            if(piece.player == player) throw Exception("Can't move a piece where your piece lies.")
+
+            players.find { (it.username == piece.player) }!!.killPiece(piece.position)
+        }
+    }
+
+    private fun checkPlayerAndDice(player: String) {
+        if (player != currPlayer) throw Exception("It's not your turn")
+        if (currTurn.dices.isEmpty()) throw Exception("You need to roll the dices first")
     }
 }
 
