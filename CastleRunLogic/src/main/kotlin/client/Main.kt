@@ -4,6 +4,7 @@ import org.example.logic.boardFromFile
 import org.example.models.Game
 import org.example.models.GameRules
 import org.example.models.board.position.Position
+import org.example.models.player.Piece
 import org.example.models.player.Player
 import java.io.File
 
@@ -12,13 +13,13 @@ fun main() {
     println(boardFile.absolutePath)
     val board = boardFromFile(boardFile)
     val p1 = Player("Player 1")
-    p1.deployPiece(Position(2, 5))
-    p1.deployPiece(Position(2, 3))
+    p1.pieces.add(Piece(p1.username, Position(2, 5)))
+    p1.pieces.add(Piece(p1.username, Position(2, 3)))
     val p2 = Player("Player 2")
-    p2.deployPiece(Position(5, 3))
-    p2.deployPiece(Position(4, 7))
+    p2.pieces.add(Piece(p2.username, Position(5, 3)))
+    p2.pieces.add(Piece(p2.username, Position(4, 7)))
     val p3 = Player("Player 3")
-    p3.deployPiece(Position(2, 15))
+    p3.pieces.add(Piece(p3.username, Position(2, 15)))
     val p4 = Player("Player 4")
     
     

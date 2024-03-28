@@ -1,11 +1,13 @@
 package org.example.models.turn
 
-class Turn(val player: String, val number: Int) {
+import org.example.models.player.Player
+
+class Turn(val player: Player, val number: Int) {
     val actions: MutableList<BaseAction> = mutableListOf()
     val dices: MutableList<Dice> = mutableListOf()
 
-    fun rollDices(player: String, numberOfDices: Int, isDuel: Boolean) {
+    fun rollDices(player: Player, numberOfDices: Int, isDuel: Boolean) {
         dices.add(Dice(player, numberOfDices, isDuel))
-        actions.add(RollDiceAction(player, dices.last()))
+        actions.add(RollDiceAction(player.username, dices.last()))
     }
 }

@@ -1,48 +1,15 @@
 package org.example.models.player
 
-import org.example.models.board.position.Position
-
 data class Player(val username: String) {
     val pieces: MutableList<Piece> = mutableListOf()
     private val items: MutableList<Item> = mutableListOf()
-    var piecesAtExit = 0
+    val piecesAtExit: Int get() = pieces.size
 
-    fun getPieceAt(position: Position): Piece? {
-        return pieces.find { it.position == position }
-    }
-
-    fun movePiece(from: Position, to: Position) {
-        val piece = getPieceAt(from)
-        if (piece != null) {
-            piece.position = to
+    override fun equals(other: Any?): Boolean {
+        if (other != null) {
+            val otherPlayer = other as Player
+            return otherPlayer.username == this.username && otherPlayer.pieces == this.pieces && otherPlayer.items == this.items && otherPlayer.piecesAtExit == this.piecesAtExit
         }
-    }
-
-    fun deployPiece(at: Position) {
-        pieces.add(Piece(username, at))
-    }
-
-    fun killPiece(at: Position) {
-        val piece = getPieceAt(at)
-        if (piece != null) {
-            pieces.remove(piece)
-        }
-    }
-
-    fun useItem(piece: Piece) {
-
-    }
-
-    fun addItem(item: Item) {
-        items.add(item)
-    }
-
-    fun pieceReachedExit(piece: Piece) {
-        piecesAtExit++
-    }
-
-    fun pieceKilledAtExit(piece: Piece) {
-        if(piecesAtExit >= 0) piecesAtExit--
-        else println("$username almost had -1 pieces.")
+        return false
     }
 }

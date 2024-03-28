@@ -17,7 +17,7 @@ data class Game(
     val challengeNumber: Int = random(1, 6)
 ) {
     val currTurn: Turn get() = turns.last()
-    var currPlayer: String = players[0].username
+    var currPlayer: Player = players[0]
 
     fun printGame() {
         println("Game: $id")
@@ -36,7 +36,7 @@ data class Game(
      * [position] The list of positions (so to make it easier if there are multiple used)
      * [enemyPlayer] The name of the enemy player in case it applies to the action
      */
-    fun play(player: String, action: String, position: List<Position>, enemyPlayer: String) {
+    fun play(player: Player, action: String, position: List<Position>, enemyPlayer: Player) {
         when(action) {
             "rollDice" -> {
                 if(position.isNotEmpty()) throw Exception("Rolling the dice does not need positions")
@@ -57,20 +57,20 @@ data class Game(
         }
     }
 
-    fun rollDices(player: String) {
+    fun rollDices(player: Player) {
         if (player != currPlayer) throw Exception("It's not your turn")
         if (currTurn.dices.isNotEmpty()) throw Exception("You already rolled the dices")
 
         val dice = Dice(player, rules.numDicesToMove, false)
         currTurn.dices.add(dice)
-        currTurn.actions.add(RollDiceAction(player, dice))
+        currTurn.actions.add(RollDiceAction(player.username, dice))
     }
 
-    fun move(player: String, from: Position, to: Position) {
+    fun move(player: Player, from: Position, to: Position) {
         checkPlayerAndDice(player)
 
         val piece = getPieceAt(from) ?: throw Exception("There's no piece in the position $from")
-        if (piece.player != player) throw Exception("You can't move the enemy's piece")
+        if (piece.player != player.username) throw Exception("You can't move the enemy's piece")
 
         val dice = currTurn.dices.last()
         if (dice.used.all { it }) throw Exception("You already used all the dices")
@@ -81,30 +81,27 @@ data class Game(
         val checkPosition = getPieceAt(to)
         checkForPiece(player, checkPosition)
 
-        players.find { it.username == player }!!.movePiece(from, to)
+        piece.position = to
         dice.use(distance)
-        currTurn.actions.add(MoveAction(player, from, to))
+        currTurn.actions.add(MoveAction(player.username, from, to))
     }
 
     /**
      * Deploys a new piece to the board
-     * [playerName] Player whose piece belongs to
+     * [player] Player whose piece belongs to
      * [to] Where the piece will be going to
      */
-    fun deploy(playerName: String, to: Position) {
-        checkPlayerAndDice(playerName)
+    fun deploy(player: Player, to: Position) {
+        checkPlayerAndDice(player)
 
         val dice = currTurn.dices.last()
         if (dice.used.all { it }) throw Exception("You already used all the dices")
 
         val checkPosition = getPieceAt(to)
-        checkForPiece(playerName, checkPosition)
+        checkForPiece(player, checkPosition)
 
-        val player = players.find { it.username == playerName }
-        if(player == null) throw Exception("Player not found")
-
-        player.deployPiece(to)
-        currTurn.actions.add(DeployAction(playerName, to))
+        player.pieces.add(Piece(player.username, to))
+        currTurn.actions.add(DeployAction(player.username, to))
     }
 
     /**
@@ -115,7 +112,7 @@ data class Game(
      * [enemyPlayer] The name of the player challenged
      * [enemyPiecePos] The position of the challenged player's chosen piece
      */
-    fun challenge(player: String, piecePos: Position, enemyPlayer: String, enemyPiecePos: Position) {
+    fun challenge(player: Player, piecePos: Position, enemyPlayer: Player, enemyPiecePos: Position) {
         checkPlayerAndDice(player)
 
         val dice = currTurn.dices.last()
@@ -132,12 +129,12 @@ data class Game(
         challengeDiceEnemy.roll()
 
         if(challengeDice.values[0] >= challengeDiceEnemy.values[0]) {
-            players.find { (it.username == enemyPiece.player) }!!.killPiece(enemyPiece.position)
+            players.find { (it.username == enemyPiece.player) }!!.pieces.remove(enemyPiece)
         } else {
-            players.find { (it.username == piece.player) }!!.killPiece(piece.position)
+            players.find { (it.username == piece.player) }!!.pieces.remove(piece)
         }
 
-        currTurn.actions.add(DuelAction(player, piece, enemyPiece, 1))
+        currTurn.actions.add(DuelAction(player.username, piece, enemyPiece, 1))
     }
 
     private fun applyChallenge(winner: Piece, loser: Piece) {
@@ -150,20 +147,20 @@ data class Game(
 
     private fun getPieceAt(position: Position): Piece? {
         players.forEach { player ->
-            player.getPieceAt(position) ?: return@forEach
+            player.pieces.find { it.position == position } ?: return@forEach
         }
         return null
     }
 
-    private fun checkForPiece(player: String, piece: Piece?) {
+    private fun checkForPiece(player: Player, piece: Piece?) {
         if(piece != null) {
-            if(piece.player == player) throw Exception("Can't move a piece where your piece lies.")
+            if(piece.player == player.username) throw Exception("Can't move a piece where your piece lies.")
 
-            players.find { (it.username == piece.player) }!!.killPiece(piece.position)
+            players.find { (it.username == piece.player) }!!.pieces.remove(piece)
         }
     }
 
-    private fun checkPlayerAndDice(player: String) {
+    private fun checkPlayerAndDice(player: Player) {
         if (player != currPlayer) throw Exception("It's not your turn")
         if (currTurn.dices.isEmpty()) throw Exception("You need to roll the dices first")
     }
