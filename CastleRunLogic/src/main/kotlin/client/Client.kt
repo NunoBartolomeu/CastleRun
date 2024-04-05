@@ -7,10 +7,6 @@ import org.example.models.player.Piece
 import org.example.models.player.Player
 
 class Client: IClient {
-    override fun roll(game: Game, player: Player) {
-        TODO("Not yet implemented")
-    }
-
     override fun move(game: Game, player: Player, piece: Piece, to: Position) {
         TODO("Not yet implemented")
     }

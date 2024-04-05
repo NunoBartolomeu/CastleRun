@@ -24,6 +24,4 @@ class Multi21 {
 }
 
 fun main() {
-    val board = Multi21().generateBoard(5, 12)
-    board.print()
 }

@@ -3,26 +3,38 @@ package org.example.models.turn
 import org.example.models.player.Item
 import org.example.models.player.Piece
 import org.example.models.board.position.Position
+import org.example.models.player.Player
 
-sealed class BaseAction(val message: String)
+enum class ActionType { START_TURN, END_TURN, GAME_OVER, DEPLOY, MOVE, SELECT_ALLY, SELECT_ENEMY, CHALLENGE_RESULT, USE_ITEM, KILL }
 
-class RollDiceAction(val player: String, val dice: Dice): 
-    BaseAction("The $player rolled the dice ${dice.used} and got ${dice.values}")
-class MoveAction(val player: String, val from: Position, val to: Position):
-    BaseAction("The $player moved the piece from $from to $to")
-class DeployAction(val player: String, val at: Position):
-    BaseAction("The $player deployed a piece at $at")
-class UseItemAction(val player: String, val item: Item, val piece: Piece):
-    BaseAction("The $player used the item $item on the piece $piece")
-class ChosenRewardAction(val reward: String):
-    BaseAction("The system chose the reward $reward")
-class ChosenPunishmentAction(val punishment: String):
-    BaseAction("The system chose the punishment $punishment")
-class DuelAction(val player: String, val allyPiece: Piece, val enemyPiece: Piece, val number: Int):
-    BaseAction("The $player's piece $allyPiece is dueling the piece $enemyPiece with $number")
-class KillAction(val player: String, val piece: Piece):
-    BaseAction("The $player killed the piece $piece")
-class EndTurnAction(val player: String):
-    BaseAction("The $player ended the turn")
-class EndGameAction(val player: String):
-    BaseAction("The $player ended the game")
+sealed class BaseAction(val type: ActionType ,val message: String)
+
+class StartTurnAction(val player: Player, turnNumber: Int):
+    BaseAction(ActionType.START_TURN, "${player.username} started the turn $turnNumber.")
+
+class EndTurnAction(val player: Player):
+    BaseAction(ActionType.END_TURN, "${player.username} ended the turn.")
+
+class GameOverAction(val player: Player):
+    BaseAction(ActionType.GAME_OVER, "${player.username} won the game.")
+
+class DeployAction(val player: Player, val at: Position):
+    BaseAction(ActionType.DEPLOY, "${player.username} deployed a piece at $at")
+
+class MoveAction(val player: Player, val from: Position, val to: Position):
+    BaseAction(ActionType.MOVE, "${player.username} moved the piece from $from to $to")
+
+class SelectAllyAction(val player: Player, val ally: Piece):
+    BaseAction(ActionType.SELECT_ALLY, "${player.username} selected the ally $ally for the challenge")
+
+class SelectEnemyAction(val player: Player, val enemy: Piece):
+    BaseAction(ActionType.SELECT_ENEMY, "${player.username} selected the enemy $enemy for the challenge")
+
+class ChallengeResultAction(val player: Player, val result: Boolean):
+    BaseAction(ActionType.CHALLENGE_RESULT, "${player.username} ${if (result) "won" else "lost"} the challenge")
+
+class UseItemAction(val player: Player, val item: Item, val piece: Piece):
+    BaseAction(ActionType.USE_ITEM, "${player.username} used the item $item on the piece $piece")
+
+class KillAction(val player: Player, val piece: Piece):
+    BaseAction(ActionType.KILL, "${player.username} killed the piece $piece")

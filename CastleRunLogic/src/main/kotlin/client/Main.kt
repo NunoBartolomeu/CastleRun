@@ -6,6 +6,7 @@ import org.example.models.GameRules
 import org.example.models.board.position.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
+import org.example.models.printGame
 import java.io.File
 
 fun main() {
@@ -24,13 +25,19 @@ fun main() {
     
     
     val players = listOf(p1, p2, p3)
-    val rules = GameRules()
+    val rules = GameRules(
+        numDicesToMove = 1000
+    )
     
     val game = Game(
+        id = "TestGame",
         board = board,
         players = players,
         rules = rules
     )
 
-    game.printGame()
+    printGame(game)
+    println(game.board.entries)
+    game.deploy(p1, Position(2, 2), Position(3,4), 5)
+    printGame(game)
 }

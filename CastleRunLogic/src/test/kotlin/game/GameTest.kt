@@ -6,7 +6,7 @@ import org.example.models.GameRules
 import org.example.models.board.position.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
-import org.example.models.turn.Dice
+import org.example.models.turn.Dices
 import org.example.models.turn.Turn
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,16 +32,16 @@ class GameTest {
 
     @Test
     fun deployTest() {
-        val dice = Dice(p1, 1, false)
-        dice.values[0] = 1
+        val dices = Dices(p1, 1, false)
+        dices.values[0] = 1
 
         val turn = Turn(p1, 1)
-        turn.dices.add(dice)
+        turn.dices.add(dices)
         game.turns.add(turn)
-        game.currTurn.dices.add(dice)
+        game.currTurn.dices.add(dices)
 
         val position = Position(3, 4)
-        game.deploy(dice, p1, position)
+        game.deploy(dices, p1, position)
         //game.printGame()
 
         assertEquals(position, game.players[0].pieces[0].position)
@@ -49,13 +49,13 @@ class GameTest {
 
     @Test
     fun challengeTest() {
-        val dice = Dice(p1, 1, false)
-        dice.values[0] = game.challengeNumber
+        val dices = Dices(p1, 1, false)
+        dices.values[0] = game.challengeNumber
 
         val turn = Turn(p1, 1)
-        turn.dices.add(dice)
+        turn.dices.add(dices)
         game.turns.add(turn)
-        game.currTurn.dices.add(dice)
+        game.currTurn.dices.add(dices)
 
         val piece = Piece(p1.username, Position(3, 4))
         val enemyPiece = Piece(p2.username, Position(5, 4))
@@ -63,7 +63,7 @@ class GameTest {
         p1.pieces.add(piece)
         p2.pieces.add(enemyPiece)
 
-        game.challenge(dice, p1, piece.position, p2, enemyPiece.position)
+        game.challenge(dices, p1, piece.position, p2, enemyPiece.position)
         //game.printGame()
 
         print(game.currTurn.actions[0].message)

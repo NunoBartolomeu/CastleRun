@@ -7,8 +7,6 @@ import org.example.models.player.Piece
 import org.example.models.player.Player
 
 interface IClient {
-    fun roll(game: Game, player: Player)
-
     fun move(game: Game, player: Player, piece: Piece, to: Position)
 
     fun deploy(game: Game, player: Player, at: Position)
