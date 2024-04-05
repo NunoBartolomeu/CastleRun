@@ -4,6 +4,7 @@ import org.example.logic.random
 import org.example.models.board.Board
 import org.example.models.board.Tile
 import org.example.models.board.position.Position
+import org.example.models.player.Item
 import org.example.models.player.Piece
 import org.example.models.player.Player
 import org.example.models.turn.*
@@ -12,7 +13,7 @@ data class Game(
     val id: String,
     val board: Board<Tile>,
     val players: List<Player>,
-    val rules: GameRules,
+    val rules: GameRules = GameRules(),
     val turns: MutableList<Turn> = mutableListOf(),
     val challengeNumber: Int = random(1, 6),
 ) {
@@ -110,76 +111,56 @@ data class Game(
     }
 
     /**
-     * The point of decision for the action to be taken
-     * [player] The player who is doing a move
-     * [position] The list of positions (so to make it easier if there are multiple used)
-     * [enemyPlayer] The name of the enemy player in case it applies to the action
-     *//*
-    fun play(player: Player, action: String, position: List<Position>, enemyPlayer: Player) {
-        when(action) {
-            "rollDice" -> {
-                if(position.isNotEmpty()) throw Exception("Rolling the dice does not need positions")
-                rollDices(player)
-            }
-            "move" -> {
-                if(position.size != 2) throw Exception("Wrong number of positions for action move")
-                move(player, position[0], position[1])
-            }
-            "deploy" -> {
-                if(position.size != 1) throw Exception("Wrong number of positions for action deploy")
-                deploy(player, position[0])
-            }
-            "challenge" -> {
-                if(position.size != 2) throw Exception("Wrong number of positions for action challenge")
-                challenge(player, position[0], enemyPlayer, position[1])
-            }
-        }
-    }*/
-  
-
-    /**
      * Logic for the challenge mechanic of the game. This happens when a player gets a die that has
      * the same number as the [challengeNumber] variable decided at the beginning of the game
      * [player] The name of the player
      * [piecePos] The position of the player's chosen piece
      * [enemyPlayer] The name of the player challenged
      * [enemyPiecePos] The position of the challenged player's chosen piece
-     */
-    /*
-    fun challenge(dices: Dices, player: Player, piecePos: Position, enemyPlayer: Player, enemyPiecePos: Position) {
-        checkPlayerAndDice(player)
-
-        if(!currTurn.dices.contains(dices)) throw Exception("Invalid dice")
-        if(dices.values.all { it != challengeNumber }) throw Exception("You didn't get the challenge number")
+     *//*
+    fun challenge(player: Player, piecePos: Position, enemyPlayer: Player, enemyPiecePos: Position) {
+        if(isOver) throw Exception("The game is over")
+        if(player.challenges == 0) throw Exception("You don't have challenges")
 
         val piece = getPieceAt(piecePos)
         val enemyPiece = getPieceAt(enemyPiecePos)
 
         if(piece == null || enemyPiece == null) throw Exception("Invalid piece selected")
 
-        val challengeDices = Dices(player, 1, true)
-        val challengeDicesEnemy = Dices(enemyPlayer, 1, true)
+        val challengeDices = Dice(player, 1, true)
+        val challengeDicesEnemy = Dice(enemyPlayer, 1, true)
         challengeDices.roll()
         challengeDicesEnemy.roll()
 
-        if(challengeDices.values[0] >= challengeDicesEnemy.values[0]) {
-            players.find { (it.username == enemyPiece.owner) }!!.pieces.remove(enemyPiece)
-        } else {
-            players.find { (it.username == piece.owner) }!!.pieces.remove(piece)
-        }
+        val win = challengeDices.values[0] >= challengeDicesEnemy.values[0]
 
-        currTurn.actions.add(DuelAction(player.username, piece, enemyPiece, 1))
-    }
-    */
+        killPiece(if(win) enemyPiece else piece)
+
+        currTurn.actions.add(ChallengeResultAction(player, win))
+    }*/
+
     private fun applyChallenge(winner: Piece, loser: Piece) {
         TODO("Applies the result of a challenge")
     }
 
-    fun useItem() {
-        TODO()
+    fun useItem(item: Item.Type, at: Position) {
+        when(item) {
+            Item.Type.Sword -> useSword(at)
+            Item.Type.Axe -> TODO()
+            Item.Type.Shield -> TODO()
+            Item.Type.Bow -> TODO()
+            Item.Type.Boots -> TODO()
+            Item.Type.Cape -> TODO()
+            Item.Type.Dagger -> TODO()
+            Item.Type.Robe -> TODO()
+            Item.Type.Chestplate -> TODO()
+            Item.Type.Rope -> TODO()
+            Item.Type.Helm -> TODO()
+            Item.Type.Goat -> TODO()
+        }
     }
 
-    private fun getPieceAt(position: Position): Piece? {
+    fun getPieceAt(position: Position): Piece? {
         return players.flatMap { it.pieces }.find { it.position == position }
     }
 
@@ -199,6 +180,16 @@ data class Game(
         if(piece != null) {
             if(piece.owner == player.username) throw Exception("Can't move a piece into a position with your own piece")
             players.find { (it.username == piece.owner) }!!.pieces.remove(piece)
+        }
+    }
+
+    fun killPiece(piece: Piece) {
+        val player = players.find { (it.username == piece.owner) }
+        if(player != null) {
+            player.pieces.remove(piece)
+            currTurn.actions.add(KillAction(player, piece))
+        } else {
+            throw Exception("Player not found")
         }
     }
 }

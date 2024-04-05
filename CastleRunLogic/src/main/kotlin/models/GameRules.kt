@@ -17,5 +17,8 @@ data class GameRules (
     //Dices
     val numDicesToMove: Int = 2,
     val minDiceValue: Int = 1,
-    val maxDiceValue: Int = 6
+    val maxDiceValue: Int = 6,
+
+    //Items
+    val swordRange: Int = 1
 )

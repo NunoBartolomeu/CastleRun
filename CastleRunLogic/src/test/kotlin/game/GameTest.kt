@@ -6,11 +6,12 @@ import org.example.models.GameRules
 import org.example.models.board.position.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
-import org.example.models.turn.Dices
+import org.example.models.turn.Dice
 import org.example.models.turn.Turn
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class GameTest {
@@ -26,14 +27,14 @@ class GameTest {
         p2 = Player("Player 2")
         val players = listOf(p1, p2)
 
-        game = Game(board = boardFromFile(boardFile), players = players, rules = GameRules())
+        game = Game(id = UUID.randomUUID().toString(), board = boardFromFile(boardFile), players = players, rules = GameRules())
         //game.printGame()
     }
 
     @Test
     fun deployTest() {
-        val dices = Dices(p1, 1, false)
-        dices.values[0] = 1
+        val dices = Dice(p1, 1, false)
+        dices.value = 1
 
         val turn = Turn(p1, 1)
         turn.dices.add(dices)
