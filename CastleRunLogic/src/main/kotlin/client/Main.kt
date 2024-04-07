@@ -2,11 +2,11 @@ package org.example.client
 
 import org.example.logic.boardFromFile
 import org.example.models.Game
-import org.example.models.GameRules
 import org.example.models.board.position.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
 import org.example.models.printGame
+import org.example.models.rules.GameRules
 import java.io.File
 
 fun main() {

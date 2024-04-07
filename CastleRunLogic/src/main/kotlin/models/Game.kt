@@ -7,13 +7,17 @@ import org.example.models.board.position.Position
 import org.example.models.player.Item
 import org.example.models.player.Piece
 import org.example.models.player.Player
+import org.example.models.rules.GameRules
+import org.example.models.rules.ItemRules
 import org.example.models.turn.*
+import java.util.*
 
 data class Game(
     val id: String,
     val board: Board<Tile>,
     val players: List<Player>,
     val rules: GameRules = GameRules(),
+    val itemRules: ItemRules = ItemRules(),
     val turns: MutableList<Turn> = mutableListOf(),
     val challengeNumber: Int = random(1, 6),
 ) {
@@ -27,7 +31,7 @@ data class Game(
     ////////////////////////////////////////// TURN LOGIC //////////////////////////////////////////
 
     private fun startNewTurn(player: Player) {
-        val dices = List(rules.numDicesToMove) { Dice(it, random(rules.minDiceValue, rules.maxDiceValue), false) }
+        val dices = MutableList(rules.numDicesToMove) { Dice(rules.minDiceValue, rules.maxDiceValue) }
         val number = if (turns.isEmpty()) 0 else currTurn.number + 1
         val turn = Turn(number, player.username, dices)
         turn.actions.add(StartTurnAction(player,number))
@@ -80,7 +84,7 @@ data class Game(
         checkForPiece(player, checkPosition)
 
         player.pieces.add(Piece(player.username, to))
-        currTurn.dices.find { !it.wasUsed && it.value == distance }!!.wasUsed = true
+        currTurn.dices.find { !it.used && it.value == distance }!!.used = true
 
         currTurn.actions.add(DeployAction(player, to))
     }
@@ -95,9 +99,9 @@ data class Game(
      */
     fun move(player: Player, from: Position, to: Position, distance: Int) {
         if (isOver) throw Exception("The game is over")
-        if (currTurn.isPlayersTurn(player)) throw Exception("It's not your turn")
-        if (currTurn.hasUnusedDice()) throw Exception("You don't have any dice left to use")
-        if (currTurn.hasUnusedDiceWithValue(distance)) throw Exception("There's no unused dice with that value")
+        if (!currTurn.isPlayersTurn(player)) throw Exception("It's not your turn")
+        if (!currTurn.hasUnusedDice()) throw Exception("You don't have any dice left to use")
+        if (!currTurn.hasUnusedDiceWithValue(distance)) throw Exception("There's no unused dice with that value")
         if (distance != board.calculateDistance(from, to)) throw Exception("The distance walked doesn't match the dice distance")
 
         val piece = player.pieces.find { it.position == from }
@@ -143,9 +147,20 @@ data class Game(
         TODO("Applies the result of a challenge")
     }
 
-    fun useItem(item: Item.Type, at: Position) {
-        when(item) {
-            Item.Type.Sword -> useSword(at)
+    /**
+     * Calls the function to execute according to the item given
+     * The player needs to have the item with them
+     * [player] The player using the item
+     * [item] The item being used
+     * [at] The position of the piece the item is being used on
+     */
+    fun useItem(player: Player, item: Item, at: Position) {
+        if(isOver) throw Exception("The game is over")
+        if(!currTurn.isPlayersTurn(player)) throw Exception("It's not your turn")
+        if(!player.items.contains(item)) throw Exception("You do not possess the item")
+
+        when(item.type) {
+            Item.Type.Sword -> useSword(player, at)
             Item.Type.Axe -> TODO()
             Item.Type.Shield -> TODO()
             Item.Type.Bow -> TODO()
@@ -160,7 +175,12 @@ data class Game(
         }
     }
 
-    fun getPieceAt(position: Position): Piece? {
+    /**
+     * Board and Piece functions
+     */
+
+    // Returns a piece given a position, otherwise null
+    private fun getPieceAt(position: Position): Piece? {
         return players.flatMap { it.pieces }.find { it.position == position }
     }
 
@@ -183,13 +203,47 @@ data class Game(
         }
     }
 
-    fun killPiece(piece: Piece) {
+    /**
+     * Takes hit points away from a piece by a given amount
+     * [piece] The piece being damaged
+     * [amount] The amount of points being taken
+     */
+    private fun damagePiece(piece: Piece, amount: Int) {
+        piece.hitPoints -= amount
+        if(piece.hitPoints <= 0) {
+            killPiece(piece)
+        }
+    }
+
+    /**
+     * Takes a piece from play when its hit points reach 0
+     * [piece] The piece to be removed
+     */
+    private fun killPiece(piece: Piece) {
         val player = players.find { (it.username == piece.owner) }
         if(player != null) {
             player.pieces.remove(piece)
             currTurn.actions.add(KillAction(player, piece))
         } else {
             throw Exception("Player not found")
+        }
+    }
+
+    /**
+     * Item Functions
+     */
+
+    /**
+     * Sword usage, damages pieces that are in the vicinity of a given piece
+     * [at] Position to be used in
+     */
+    private fun useSword(player: Player, at: Position) {
+        val tiles = board.getTile(at)?.let { board.getAllTilesAt(tile = it, distance = itemRules.swordRange) }
+        tiles?.forEach {
+            val piece = getPieceAt(it.position)
+            if(piece != null) {
+                if(piece.owner != player.username) damagePiece(piece, itemRules.swordDamage)
+            }
         }
     }
 }

@@ -1,3 +1,5 @@
 package org.example.models.turn
 
-data class Dice(val idx: Int, val value: Int, var wasUsed:Boolean)
+import org.example.logic.random
+
+class Dice(min: Int, max: Int, val value: Int = random(min, max), var used: Boolean = false)
