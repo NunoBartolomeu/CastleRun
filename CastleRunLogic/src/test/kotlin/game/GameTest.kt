@@ -2,7 +2,7 @@ package game
 
 import org.example.logic.boardFromFile
 import org.example.models.Game
-import org.example.models.board.position.Position
+import org.example.models.board.Position
 import org.example.models.player.Item
 import org.example.models.player.Piece
 import org.example.models.player.Player

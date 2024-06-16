@@ -1,6 +1,6 @@
 package org.example.models.rules
 
-data class GameRules (
+data class GameVariables (
     //Entries    
     val sharedEntries: Boolean = true,
 

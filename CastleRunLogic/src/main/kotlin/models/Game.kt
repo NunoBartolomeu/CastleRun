@@ -1,14 +1,14 @@
 package org.example.models
 
-import org.example.logic.random
+import utility.random
 import org.example.models.board.Board
 import org.example.models.board.Tile
-import org.example.models.board.position.Position
+import org.example.models.board.Position
 import org.example.models.player.Item
 import org.example.models.player.Piece
 import org.example.models.player.Player
-import org.example.models.rules.GameRules
-import org.example.models.rules.ItemRules
+import org.example.models.rules.GameVariables
+import org.example.models.rules.ItemVariables
 import org.example.models.turn.*
 import java.util.*
 
@@ -16,8 +16,8 @@ data class Game(
     val id: String,
     val board: Board<Tile>,
     val players: List<Player>,
-    val rules: GameRules = GameRules(),
-    val itemRules: ItemRules = ItemRules(),
+    val rules: GameVariables = GameVariables(),
+    val itemVariables: ItemVariables = ItemVariables(),
     val turns: MutableList<Turn> = mutableListOf(),
     val challengeNumber: Int = random(1, 6),
 ) {
@@ -77,8 +77,8 @@ data class Game(
         if (player.pieces.size >= rules.maxActivePieces) throw Exception("You don't have any pieces left to deploy")
         if (!board.entries.any { it == entry }) throw Exception("Invalid entry")
         //TODO Check it's actually his entry or if the entries are shared
-        if (board.getTile(to)!!.type != Tile.Type.FLOOR) throw Exception("Can't deploy a piece on a non-floor tile")
-        if (distance != board.calculateDistance(entry, to)) throw Exception("The distance walked doesn't match the real distance")
+        if (board[to]!!.type != Tile.Type.FLOOR) throw Exception("Can't deploy a piece on a non-floor tile")
+        //if (distance != board.calculateDistance(entry, to)) throw Exception("The distance walked doesn't match the real distance")
 
         val checkPosition = getPieceAt(to)
         checkForPiece(player, checkPosition)
@@ -102,7 +102,7 @@ data class Game(
         if (!currTurn.isPlayersTurn(player)) throw Exception("It's not your turn")
         if (!currTurn.hasUnusedDice()) throw Exception("You don't have any dice left to use")
         if (!currTurn.hasUnusedDiceWithValue(distance)) throw Exception("There's no unused dice with that value")
-        if (distance != board.calculateDistance(from, to)) throw Exception("The distance walked doesn't match the dice distance")
+        //if (distance != board.calculateDistance(from, to)) throw Exception("The distance walked doesn't match the dice distance")
 
         val piece = player.pieces.find { it.position == from }
         if (piece == null) throw Exception("There's no piece at the position $from")
@@ -238,13 +238,6 @@ data class Game(
      * [at] Position to be used in
      */
     private fun useSword(player: Player, at: Position) {
-        val tiles = board.getTile(at)?.let { board.getAllTilesAt(tile = it, distance = itemRules.swordRange) }
-        tiles?.forEach {
-            val piece = getPieceAt(it.position)
-            if(piece != null) {
-                if(piece.owner != player.username) damagePiece(piece, itemRules.swordDamage)
-            }
-        }
     }
 }
 

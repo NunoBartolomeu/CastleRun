@@ -1,7 +1,5 @@
 package org.example.models.board
 
-import org.example.models.board.position.Position
-
 class MutableBoard(numRows: Int, numCols: Int): Board<MutableTile>(voidBoard(numRows, numCols)) {
     companion object {
         fun voidBoard(numRows: Int, numCols: Int) = Array(numRows) { row -> Array(numCols) { col -> MutableTile(row, col, Tile.Type.VOID) } }

@@ -1,4 +1,4 @@
-package org.example.logic
+package utility
 
 import com.google.gson.Gson
 

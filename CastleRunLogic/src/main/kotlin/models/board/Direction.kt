@@ -1,4 +1,6 @@
-package org.example.models.board.position
+package org.example.models.board
+
+typealias Dir = Direction
 
 enum class Direction { N, E, S, W, NE, NW, SE, SW;
     fun asPosition(): Position {
@@ -12,5 +14,11 @@ enum class Direction { N, E, S, W, NE, NW, SE, SW;
             SE -> Position(1, 1)
             SW -> Position(1, -1)
         }
+    }
+
+    companion object {
+        val cardinal = listOf(N, W, S, E)
+        val diagonal = listOf(NE, NW, SE, SW)
+        val all = entries
     }
 }

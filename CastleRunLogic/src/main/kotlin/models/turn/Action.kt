@@ -2,7 +2,7 @@ package org.example.models.turn
 
 import org.example.models.player.Item
 import org.example.models.player.Piece
-import org.example.models.board.position.Position
+import org.example.models.board.Position
 import org.example.models.player.Player
 
 enum class ActionType { START_TURN, END_TURN, GAME_OVER, DEPLOY, MOVE, SELECT_ALLY, SELECT_ENEMY, CHALLENGE_RESULT, USE_ITEM, KILL }
