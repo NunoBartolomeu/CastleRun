@@ -1,15 +1,27 @@
 package org.example
 
-import org.example.logic.boardFromFile
 import org.example.models.Game
 import org.example.models.board.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
 import org.example.models.printGame
 import org.example.models.rules.GameVariables
+import utility.boardFromFile
 import java.io.File
 
 fun main() {
+    val start = Position(7, 12)
+    val maxDistance = 300
+
+    val boardFile = File("src/main/resources/boards/Board2.txt")
+    val board = boardFromFile(boardFile)
+
+    board.printBoardValues()
+    println("\n")
+    board.printGradientMap(start, maxDistance, 5, false, false, false)
+}
+
+fun mainn() {
     val boardFile = File("src/main/resources/boards/Board2.txt")
     println(boardFile.absolutePath)
     val board = boardFromFile(boardFile)

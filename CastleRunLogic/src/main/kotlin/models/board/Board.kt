@@ -1,6 +1,6 @@
 package org.example.models.board
 
-import org.example.logic.boardFromFile
+import utility.boardFromFile
 import java.io.File
 import java.util.*
 
@@ -35,7 +35,7 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
     }
 
     private fun isWallNextToVoid(pos: Position): Boolean {
-        val directions = Direction.values().map { it.asPosition() }
+        val directions = Direction.entries.map { it.asPosition() }
         val neighbors = directions + listOf(Position(-1, 0), Position(1, 0), Position(0, -1), Position(0, 1))
 
         for (neighbor in neighbors) {
@@ -154,16 +154,4 @@ open class Board<T: Tile>(val tiles: Array<Array<T>>, val items: Any? = null) {
             println()
         }
     }
-}
-
-fun main() {
-    val start = Position(5, 2)
-    val maxDistance = 300
-
-    val boardFile = File("src/main/resources/boards/Board1.txt")
-    val board = boardFromFile(boardFile)
-
-    board.printBoardValues()
-    println("\n")
-    board.printGradientMap(start, maxDistance, 5, false, true, true)
 }

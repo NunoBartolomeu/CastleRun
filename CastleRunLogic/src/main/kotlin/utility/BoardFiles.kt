@@ -14,10 +14,20 @@ fun boardFromFile(file: File): Board<Tile> {
 }
 
 fun boardFromLayout(layout: String): Board<Tile> {
-    val lines = layout.split("\r\n")
+    // Remove all characters except digits and newlines
+    val cleanedLayout = layout.replace(Regex("[^\\d\n]"), "")
+
+    // Split the cleaned layout by newlines
+    val lines = cleanedLayout.split("\n")
+
+    // Ensure each line has the same length and contains only valid digits
     val tiles = Array(lines.size) { row ->
         Array(lines[0].length) { col ->
-            Tile(row, col, Tile.Type.entries[lines[row][col].toString().toInt()])
+            val char = lines[row][col]
+            if (!char.isDigit()) {
+                throw NumberFormatException("Invalid character found: '$char' at position ($row, $col)")
+            }
+            Tile(row, col, Tile.Type.entries[char.toString().toInt()])
         }
     }
     return Board(tiles)
