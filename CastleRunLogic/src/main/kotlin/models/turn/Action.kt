@@ -7,6 +7,12 @@ import org.example.models.player.Player
 
 enum class ActionType { START_TURN, END_TURN, GAME_OVER, DEPLOY, MOVE, SELECT_ALLY, SELECT_ENEMY, CHALLENGE_RESULT, USE_ITEM, KILL }
 
+/**
+ * Actions should work as a quick reference to everything that was done in each turn
+ * Should include system changes, like starting and ending the turn
+ * Player actions, like moving a piece or challenging another player
+ * Errors from invalid actions or internal problems
+ * */
 sealed class BaseAction(val type: ActionType ,val message: String)
 
 class StartTurnAction(val player: Player, turnNumber: Int):

@@ -1,27 +1,27 @@
 package org.example
 
 import org.example.models.Game
+import org.example.models.Printer
 import org.example.models.board.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
-import org.example.models.printGame
-import org.example.models.rules.GameVariables
+import models.variables.GameVariables
 import utility.boardFromFile
 import java.io.File
 
-fun main() {
+fun mainn() {
     val start = Position(7, 12)
     val maxDistance = 300
 
     val boardFile = File("src/main/resources/boards/Board2.txt")
     val board = boardFromFile(boardFile)
 
-    board.printBoardValues()
+    Printer.printLayout(board)
     println("\n")
-    board.printGradientMap(start, maxDistance, 5, false, false, false)
+    Printer.printPathfinder(board, start, maxDistance, 15, false, false, false)
 }
 
-fun mainn() {
+fun main() {
     val boardFile = File("src/main/resources/boards/Board2.txt")
     println(boardFile.absolutePath)
     val board = boardFromFile(boardFile)
@@ -45,11 +45,17 @@ fun mainn() {
         id = "TestGame",
         board = board,
         players = players,
-        rules = rules
+        gameVariables = rules
     )
 
-    printGame(game)
-    println(game.board.entries)
+
+    val start = Position(7, 12)
+    val maxDistance = 300
+
+    Printer.printLayout(board)
+    println("\n")
+    Printer.printPathfinder(board, start, maxDistance, 15, false, false, false)
+    println("\n")
     game.deploy(p1, Position(2, 2), Position(3,4), 5)
-    printGame(game)
+    Printer.printGame(game)
 }

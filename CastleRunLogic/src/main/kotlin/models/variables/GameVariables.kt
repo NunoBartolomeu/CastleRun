@@ -1,5 +1,9 @@
-package org.example.models.rules
+package models.variables
 
+/**
+ * Contains all the possible variables a game can have.
+ * Doesn't include Item, Duel or Challenge variables.
+ * */
 data class GameVariables (
     //Entries    
     val sharedEntries: Boolean = true,
@@ -13,6 +17,7 @@ data class GameVariables (
     //Pieces
     val maxPieces: Int = 7,
     val maxActivePieces: Int = 3,
+    val piecesHp: Int = 1,
 
     //Dices
     val numDicesToMove: Int = 2,

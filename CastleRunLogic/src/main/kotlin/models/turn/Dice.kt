@@ -1,5 +1,9 @@
 package org.example.models.turn
 
-import utility.random
+typealias DiceValue = Dice.DiceValue
 
-class Dice(min: Int, max: Int, val value: Int = random(min, max), var used: Boolean = false)
+class Dice(private val values: Array<Int>) {
+    data class DiceValue(val value: Int, var used: Boolean = false)
+    fun roll(): Int = values.random()
+}
+

@@ -1,4 +1,4 @@
-package org.example.models.rules
+package models.variables
 
 data class ItemVariables(
     val swordRange: Int = 1,
