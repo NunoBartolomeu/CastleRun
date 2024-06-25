@@ -13,7 +13,7 @@ import org.example.models.turn.Turn
  */
 class GameLogic {
     companion object {
-        private fun damagePiece(game: Game, player: Player, piece: Piece, damage: Int) {
+        fun damagePiece(game: Game, player: Player, piece: Piece, damage: Int) {
             GameValidator.isValidDamage(game, player, piece)
 
             //Damage the piece
@@ -31,28 +31,13 @@ class GameLogic {
             game.getPlayer(piece.owner).pieces.remove(piece)
         }
 
-        private fun useDice(game: Game, value: Int) {
+        fun useDice(game: Game, value: Int) {
             if (GameValidator.hasUnusedDice(game.getCurrTurn(), value))
                 game.getCurrTurn().diceValues.find { it.value == value && !it.used }!!.used = true
         }
 
-        fun deploy(game: Game, player: Player, entry: Position, to: Position, distance: Int) {
-            if (GameValidator.isValidDeploy(game, player, entry, to, distance)) {
-                //If there's an enemy at the new position, kill it
-                val piece = game.getPieceAt(to)
-                if (piece != null)
-                    damagePiece(game, player, piece, game.gameVariables.piecesHp)
-                //TODO validate if stomping is always a kill or not
-                //Add the piece to the Player
-                player.pieces.add(Piece(player.username, to, game.gameVariables.piecesHp))
-                //Use the dice
-                useDice(game, distance)
-            }
-            else
-                throw Error("Deploy is invalid!")
-        }
-
         fun move(game: Game, player: Player, from: Position, to: Position, distance: Int) {
+
             if (GameValidator.isValidMove(game, player, from, to, distance)) {
                 //If there's an enemy at the new position, kill it
                 val pieceTo = game.getPieceAt(to)
@@ -74,6 +59,8 @@ class GameLogic {
         }
 
         private fun getNextPlayer(game: Game): Player {
+            if (game.turns.isEmpty())
+                return game.players.first()
             val currTurn = game.getCurrTurn()
             val index = game.players.indexOfFirst { it.username == currTurn.playerUsername }
             return if (index == game.players.size - 1) game.players[0] else game.players[index + 1]

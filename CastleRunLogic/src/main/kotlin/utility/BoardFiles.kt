@@ -3,7 +3,7 @@ package utility
 import org.example.models.board.*
 import java.io.File
 
-fun boardFromFile(file: File): Board<Tile> {
+fun boardFromFile(file: File): Board {
     if (!file.isFile)
         throw IllegalArgumentException("Path needs to be a file")
     if (file.extension == ".txt")
@@ -13,7 +13,7 @@ fun boardFromFile(file: File): Board<Tile> {
     return boardFromLayout(layout)
 }
 
-fun boardFromLayout(layout: String): Board<Tile> {
+fun boardFromLayout(layout: String): Board {
     // Remove all characters except digits and newlines
     val cleanedLayout = layout.replace(Regex("[^\\d\n]"), "")
 
@@ -27,13 +27,13 @@ fun boardFromLayout(layout: String): Board<Tile> {
             if (!char.isDigit()) {
                 throw NumberFormatException("Invalid character found: '$char' at position ($row, $col)")
             }
-            Tile(row, col, Tile.Type.entries[char.toString().toInt()])
+            Tile(Pos(row, col), Tile.Type.entries[char.toString().toInt()])
         }
     }
     return Board(tiles)
 }
 
-fun boardToFile(board: Board<Tile>, file: File) {
+fun boardToFile(board: Board, file: File) {
     val json = board.toJson()
     file.writeText(json)
 }
@@ -47,7 +47,6 @@ fun voidify(inputFile: File, outputFile: File) {
 
             if (tile.type == Tile.Type.WALL) {
                 var allVoidOrWall = true
-
                 for (direction in Dir.all) {
                     val newPos = tile.position + direction.asPosition()
 
@@ -58,7 +57,6 @@ fun voidify(inputFile: File, outputFile: File) {
                         }
                     }
                 }
-
                 if (allVoidOrWall) {
                     Tile.Type.VOID.value
                 } else {

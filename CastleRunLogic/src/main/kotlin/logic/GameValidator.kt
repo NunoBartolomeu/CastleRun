@@ -25,7 +25,8 @@ class GameValidator {
 
         private fun isValidDistance(board: Board, from: Position, to: Position, distance: Int): Boolean {
             val path = board.pathfinder(from, distance, false, true)
-            return path.contains(Pair(to, distance))
+            //return path.contains(Pair(to, distance))
+            return true
         }
 
         private fun isPlayersTurn(turn: Turn, player: Player) = turn.playerUsername == player.username

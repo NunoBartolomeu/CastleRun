@@ -9,10 +9,10 @@ class Printer {
     companion object {
         private val tileColors: Map<Tile.Type, String> = mapOf(
             Pair(Tile.Type.VOID, "\u001B[38;2;0;0;0m"),   // Black
-            Pair(Tile.Type.WALL, "\u001B[38;2;160;80;0m"),    // Dark Red
+            Pair(Tile.Type.WALL, "\u001B[38;2;160;80;0m"),    // Dark orange
             Pair(Tile.Type.FLOOR, "\u001B[38;2;200;200;200m"),   // Light Gray
-            Pair(Tile.Type.ENTRY, "\u001B[38;2;0;255;0m"),   // Blue
-            Pair(Tile.Type.EXIT, "\u001B[38;2;255;50;50m")    // Green
+            Pair(Tile.Type.ENTRY, "\u001B[38;2;0;255;0m"),   // Green
+            Pair(Tile.Type.EXIT, "\u001B[38;2;255;50;50m")    // Red
         )
 
         private val tileSymbols: Map<Tile.Type, String> = mapOf(
@@ -65,28 +65,29 @@ class Printer {
         }
 
         fun printPathfinder(
-            board: Board<Tile>,
+            board: Board,
             start: Position,
             maxDistance: Int,
             colorReduction: Int = 5,
             ignoreWalls: Boolean = false,
             onlyCardinal: Boolean = false,
-            onlyDiagonals: Boolean = false
+            onlyDiagonals: Boolean = false,
+            onlyLeafs: Boolean = false,
         ) {
-            val gradient = board.pathfinder(start, maxDistance, ignoreWalls, onlyCardinal, onlyDiagonals)
+            val gradient = board.pathfinder(start, maxDistance, ignoreWalls, onlyCardinal, onlyDiagonals, onlyLeafs)
 
             val colorMap = mutableMapOf<Position, String>()
 
             // Build color map based on gradient distances
-            for ((pos, dist) in gradient) {
-                val tile = board[pos]
+            for (node in gradient) {
+                val tile = board[node.position]
                 val color = if (tile!!.type == Tile.Type.FLOOR) {
-                    val r = 255 - (dist * colorReduction)
+                    val r = 255 - (node.distance * colorReduction)
                     "\u001B[38;2;${r};${r};${r}m"
                 } else {
                     tileColors[tile.type]!!
                 }
-                colorMap[pos] = color
+                colorMap[node.position] = color
             }
 
             // Print column labels
@@ -104,7 +105,7 @@ class Printer {
                 for (col in board.tiles[row].indices) {
                     val pos = Position(row, col)
                     val tile = board[pos]
-                    val symbol = if (gradient.any { it.first == pos }) gradient.find { it.first == pos }?.second.toString() else "."
+                    val symbol = if (gradient.any { it.position == pos }) gradient.find { it.position == pos }?.distance.toString() else "."
                     val color = colorMap[pos] ?: tileColors[tile!!.type]
                     print("${color}${symbol}${"\u001B[0m"}\t")
                 }
@@ -112,7 +113,7 @@ class Printer {
             }
         }
 
-        fun printLayout(board: Board<Tile>) {
+        fun printLayout(board: Board) {
             // Print column labels
             print("\t") // Initial tab for the row labels
             for (col in board.tiles[0].indices) {

@@ -48,40 +48,50 @@ data class Board(val tiles: Array<Array<Tile>>, val items: Any? = null) {
 
     //////////////////////////// Pathfinding Logic ////////////////////////////
 
+    data class Node(val position: Pos, val previous: Node?, val distance: Int)
+
     fun pathfinder (
         start: Position,
         distance: Int,
         ignoreWalls: Boolean = false,
         onlyCardinal: Boolean = false,
-        onlyDiagonals: Boolean = false
-    ): List<Pair<Position, Int>> {
+        onlyDiagonals: Boolean = false,
+        onlyLeafs: Boolean = false,
+    ): List<Node> {
         val directions =
             if (onlyCardinal) Dir.cardinal
             else if (onlyDiagonals) Dir.diagonal
             else Dir.all
 
-        val queue: LinkedList<Pair<Position, Int>> = LinkedList()
+        val queue: LinkedList<Node> = LinkedList()
         val visited: MutableSet<Position> = mutableSetOf()
-        val result: MutableList<Pair<Position, Int>> = mutableListOf()
+        val result: MutableList<Node> = mutableListOf()
 
-        queue.add(start to 0)
+        val startNode = Node(start, null, 0)
+        queue.add(startNode)
         visited.add(start)
-        result.add(start to 0)
+        result.add(startNode)
 
         while (queue.isNotEmpty()) {
-            val (currentPos, currentDistance) = queue.removeFirst()
+            val currNode = queue.removeFirst()
+            val currPos = currNode.position
+            val currDistance = currNode.distance
 
-            if (currentDistance >= distance) continue
+            if (currDistance >= distance)
+                continue
 
             for (direction in directions) {
-                val newPos = currentPos + direction.asPosition()
+                val newPos = currPos + direction.asPosition()
                 if (visited.contains(newPos) || !isValidTile(newPos, ignoreWalls)) continue
 
-                queue.add(newPos to currentDistance + 1)
+                val newNode = Node(newPos, currNode, currDistance + 1)
+                queue.add(newNode)
                 visited.add(newPos)
-                result.add(newPos to currentDistance + 1)
+                result.add(newNode)
             }
         }
+        if (onlyLeafs)
+            return result.filter { this[it.position]!!.type == Tile.Type.EXIT || it.distance == distance}
         return result
     }
 }

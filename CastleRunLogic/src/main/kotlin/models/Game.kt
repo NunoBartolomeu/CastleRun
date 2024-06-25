@@ -7,6 +7,7 @@ import org.example.models.player.Piece
 import org.example.models.player.Player
 import models.variables.GameVariables
 import models.variables.ItemVariables
+import org.example.logic.GameLogic
 import org.example.models.turn.*
 
 data class Game(
@@ -19,6 +20,10 @@ data class Game(
     val turns: MutableList<Turn> = mutableListOf(),
     val challengeNumber: Int = random(1, 6),
 ) {
+    init {
+        GameLogic.startTurn(this)
+    }
+
     fun getPlayer(username: String): Player = players.first { it.username == username }
     fun getCurrTurn(): Turn = turns.last()
     fun getPieceAt(position: Position): Piece? = players.flatMap { it.pieces }.find { it.position == position }
