@@ -4,7 +4,6 @@ import org.example.models.Game
 import org.example.models.board.Position
 import org.example.models.player.Piece
 import org.example.models.player.Player
-import org.example.models.turn.DiceValue
 import org.example.models.turn.Turn
 
 /**
@@ -32,30 +31,26 @@ class GameLogic {
         }
 
         fun useDice(game: Game, value: Int) {
-            if (GameValidator.hasUnusedDice(game.getCurrTurn(), value))
-                game.getCurrTurn().diceValues.find { it.value == value && !it.used }!!.used = true
+            GameValidator.hasUnusedDice(game.getCurrTurn(), value)
+            game.getCurrTurn().diceValues.find { it.value == value && !it.used }!!.used = true
         }
 
         fun move(game: Game, player: Player, from: Position, to: Position, distance: Int) {
+            GameValidator.isValidMove(game, player, from, to, distance)
+            //If there's an enemy at the new position, kill it
+            val pieceTo = game.getPieceAt(to)
+            if (pieceTo != null)
+                damagePiece(game, player, pieceTo, game.gameVariables.piecesHp)
+            //TODO validate if stomping is always a kill or not
 
-            if (GameValidator.isValidMove(game, player, from, to, distance)) {
-                //If there's an enemy at the new position, kill it
-                val pieceTo = game.getPieceAt(to)
-                if (pieceTo != null)
-                    damagePiece(game, player, pieceTo, game.gameVariables.piecesHp)
-                //TODO validate if stomping is always a kill or not
+            //Move the piece for the Player
+            val pieceFrom = game.getPieceAt(from)!!
+            pieceFrom.position = to
 
-                //Move the piece for the Player
-                val pieceFrom = game.getPieceAt(from)!!
-                pieceFrom.position = to
+            //Use the dice
+            useDice(game, distance)
 
-                //Use the dice
-                useDice(game, distance)
-
-                //TODO add an item if the tile has items
-            }
-            else
-                throw Error("Move is invalid!")
+            //TODO add an item if the tile has items
         }
 
         private fun getNextPlayer(game: Game): Player {
@@ -68,15 +63,13 @@ class GameLogic {
 
         fun startTurn(game: Game) {
             val number = if (game.turns.isEmpty()) 0 else game.getCurrTurn().number + 1
-            val dices = List(game.dices.size) { DiceValue(game.dices[it].roll()) }
+            val dices = List(game.dices.size) { game.dices[it].roll() }
             val turn = Turn(number, getNextPlayer(game).username, dices)
             game.turns.add(turn)
         }
 
         fun endTurn(game: Game, player: Player) {
-            if(GameValidator.isValidEndTurn(game, player)) {
-
-            }
+            GameValidator.isValidEndTurn(game, player)
         }
 
         fun endGame(game: Game) {

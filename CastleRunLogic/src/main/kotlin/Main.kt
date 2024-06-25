@@ -7,6 +7,7 @@ import org.example.models.player.Piece
 import org.example.models.player.Player
 import models.variables.GameVariables
 import org.example.logic.GameLogic
+import org.example.models.board.Dir
 import org.example.models.turn.Dice
 import utility.boardFromFile
 import java.io.File
@@ -20,7 +21,7 @@ fun mainn() {
 
     Printer.printLayout(board)
     println("\n")
-    Printer.printPathfinder(board, start, maxDistance, 15, false, false, false)
+   // Printer.printPathfinder(board, start, maxDistance, 15, false, false, false)
 }
 
 fun main() {
@@ -63,12 +64,12 @@ fun main() {
     GameLogic.startTurn(game)
     println(game.getCurrTurn().diceValues)
 
-    val start = Position(5, 17)
-    val maxDistance = 6
+    val start = Position(5, 15)
+    val maxDistance = 10
 
-    Printer.printLayout(board)
+    //Printer.printLayout(board)
     println("\n")
-    Printer.printPathfinder(board, start, maxDistance, 5, false, false, false, true)
+    Printer.printPathfinder(board, start, maxDistance, listOf(Dir.E), 5, false, false)
     println("\n")
-    Printer.printGame(game)
+    //Printer.printGame(game)
 }

@@ -53,16 +53,10 @@ data class Board(val tiles: Array<Array<Tile>>, val items: Any? = null) {
     fun pathfinder (
         start: Position,
         distance: Int,
+        directions: List<Dir>,
         ignoreWalls: Boolean = false,
-        onlyCardinal: Boolean = false,
-        onlyDiagonals: Boolean = false,
         onlyLeafs: Boolean = false,
     ): List<Node> {
-        val directions =
-            if (onlyCardinal) Dir.cardinal
-            else if (onlyDiagonals) Dir.diagonal
-            else Dir.all
-
         val queue: LinkedList<Node> = LinkedList()
         val visited: MutableSet<Position> = mutableSetOf()
         val result: MutableList<Node> = mutableListOf()
@@ -90,8 +84,9 @@ data class Board(val tiles: Array<Array<Tile>>, val items: Any? = null) {
                 result.add(newNode)
             }
         }
+
         if (onlyLeafs)
-            return result.filter { this[it.position]!!.type == Tile.Type.EXIT || it.distance == distance}
+            return result.filter { this[it.position]!!.type == Tile.Type.EXIT || it.distance == distance }
         return result
     }
 }

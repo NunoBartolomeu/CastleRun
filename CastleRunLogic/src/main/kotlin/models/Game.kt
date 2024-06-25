@@ -18,7 +18,6 @@ data class Game(
     val itemVariables: ItemVariables = ItemVariables(),
     val dices: List<Dice>,
     val turns: MutableList<Turn> = mutableListOf(),
-    val challengeNumber: Int = random(1, 6),
 ) {
     init {
         GameLogic.startTurn(this)

@@ -1,7 +1,5 @@
 package org.example.models.turn
 
-import org.example.models.player.Player
-
 data class Turn(
     val number: Int,
     val playerUsername: String,

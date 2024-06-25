@@ -1,6 +1,7 @@
 package org.example.models
 
 import org.example.models.board.Board
+import org.example.models.board.Dir
 import org.example.models.board.Pos
 import org.example.models.board.Position
 import org.example.models.board.Tile
@@ -68,13 +69,12 @@ class Printer {
             board: Board,
             start: Position,
             maxDistance: Int,
+            directions: List<Dir>,
             colorReduction: Int = 5,
             ignoreWalls: Boolean = false,
-            onlyCardinal: Boolean = false,
-            onlyDiagonals: Boolean = false,
             onlyLeafs: Boolean = false,
         ) {
-            val gradient = board.pathfinder(start, maxDistance, ignoreWalls, onlyCardinal, onlyDiagonals, onlyLeafs)
+            val gradient = board.pathfinder(start, maxDistance, directions, ignoreWalls, onlyLeafs)
 
             val colorMap = mutableMapOf<Position, String>()
 

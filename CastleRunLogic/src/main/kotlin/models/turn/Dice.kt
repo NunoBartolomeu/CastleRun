@@ -4,5 +4,5 @@ typealias DiceValue = Dice.DiceValue
 
 class Dice(private val values: Array<Int>) {
     data class DiceValue(val value: Int, var used: Boolean = false)
-    fun roll(): Int = values.random()
+    fun roll(): DiceValue = DiceValue(values.random())
 }

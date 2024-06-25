@@ -1,23 +1,29 @@
 Offense
-sword- declares an atack action to an enemy piece ur max range is determined by a dice throw, doesnt ignore walls
-axe- declare an atack action once on any enemy piece if you do a dice throw higher or equal to 4
-bow- declare an atack action on any enemy piece u throw a dice to hit on that specific range can hit throught walls
+sword- declares an attack action to an enemy piece ur max range is determined by a dice throw, doesnt ignore walls
+axe- declare an attack action once on any enemy piece if you do a dice throw higher or equal to 4
+bow- declare an attack action on any enemy piece u throw a dice to hit on that specific range can hit through walls
 dagger- if ur in the same tile as an enemy piece instantly kill once
+fireball- declare an attack on a tile, burns adjacent tiles, tiles stay burning and pieces take damage until fire is gone
+poison- can be used on weapons for poisoning enemies
+bomb- made with fireball and poison, adds poison and burns tiles
 
 
 
 utility
 boots- throw an extra dice for movement
-goat- leaves a goat on the current tile if an enemy piece passes through they must declare a atack action on the goat if they lose they lose that piece
+goat- leaves a goat on the current tile if an enemy piece passes through they must declare a attack action on the goat if they lose they lose that piece
 robe- ignore any piece or action declared besides movement
 cape- make one power up on the map disappear
+potion- cures piece
+elixir- heals lingering damage
+pitfall trap- when used, a trap is laid in place. When a piece steps on it, movement just stops
+
 
 defense
-shield- fully deny one single atack action during enemy turn once
-chestplate- plus 2 to ur defensive dice throws in case an enemy declares an atack action
+shield- fully deny one single attack action during enemy turn once
+chest plate- plus 2 to ur defensive dice throws in case an enemy declares an attack action
 helm- immunity to bow
 
 
-
 definitions
-atack action- garenteed kill low range
+attack action- guaranteed kill low range
