@@ -27,3 +27,17 @@ helm- immunity to bow
 
 definitions
 attack action- guaranteed kill low range
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+Sword - deal 10 dmg within 2 spaces
+Axe - deal 12 dmg in a straight line, up to 4 spaces. Stops on first enemy hit.
+Dagger - deal 18 dmg in a straight line, up to 1 space. If the enemy dies, move the attacker to that position.
+Bow - deal 6 damage to all enemies, between 6 and 10 spaces away.
+Fireball - Choose a target location, 5 spaces away. Deal 8 damage to the chosen square and burn all tiles within 1 space.
+Light staff - Remove fog within 8 spaces.
+
+IDEIA - Podiamos ter tipos diferentes de paredes, como parede de tijolo, que é solida e bloquia tudo incluindo visão.
+Parede de feno que é igual ao tijolo mas se for queimada passa a ser chão normal.
+Agua - não bloqueia a visão mas bloqueia movimento

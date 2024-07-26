@@ -37,7 +37,7 @@ fun boardToFile(board: Board, file: File) {
     val json = board.toJson()
     file.writeText(json)
 }
-
+/*
 fun voidify(inputFile: File, outputFile: File) {
     val board = boardFromFile(inputFile)
 
@@ -45,7 +45,7 @@ fun voidify(inputFile: File, outputFile: File) {
         IntArray(board.numCols) { col ->
             val tile = board.tiles[row][col]
 
-            if (tile.type == Tile.Type.WALL) {
+            if (tile.type == Tile.Type.ROCK) {
                 var allVoidOrWall = true
                 for (direction in Dir.all) {
                     val newPos = tile.position + direction.asPosition()
@@ -58,9 +58,9 @@ fun voidify(inputFile: File, outputFile: File) {
                     }
                 }
                 if (allVoidOrWall) {
-                    Tile.Type.VOID.value
+                    Tile.Type.VOID
                 } else {
-                    tile.type.value
+                    tile.type
                 }
             } else {
                 tile.type.value
@@ -77,10 +77,10 @@ fun wallify(inputFile: File, outputFile: File) {
     val updatedLayout = layout.replace('0', '1')
     outputFile.writeText(updatedLayout)
 }
-
+*/
 fun main() {
     val inputFile = File("src/main/resources/boards/Board1.txt")
     val outputFile = File("src/main/resources/boards/Board6.txt")
 
-    voidify(inputFile, outputFile)
+    //voidify(inputFile, outputFile)
 }

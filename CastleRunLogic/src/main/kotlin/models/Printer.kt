@@ -10,16 +10,16 @@ class Printer {
     companion object {
         private val tileColors: Map<Tile.Type, String> = mapOf(
             Pair(Tile.Type.VOID, "\u001B[38;2;0;0;0m"),   // Black
-            Pair(Tile.Type.WALL, "\u001B[38;2;160;80;0m"),    // Dark orange
-            Pair(Tile.Type.FLOOR, "\u001B[38;2;200;200;200m"),   // Light Gray
+            Pair(Tile.Type.ROCK, "\u001B[38;2;160;80;0m"),    // Dark orange
+            Pair(Tile.Type.DIRT, "\u001B[38;2;200;200;200m"),   // Light Gray
             Pair(Tile.Type.ENTRY, "\u001B[38;2;0;255;0m"),   // Green
             Pair(Tile.Type.EXIT, "\u001B[38;2;255;50;50m")    // Red
         )
 
         private val tileSymbols: Map<Tile.Type, String> = mapOf(
             Pair(Tile.Type.VOID, "."),   // Void
-            Pair(Tile.Type.WALL, "X"),    // Wall
-            Pair(Tile.Type.FLOOR, "_"),   // Floor (changed from 'H' to '.')
+            Pair(Tile.Type.ROCK, "X"),    // Wall
+            Pair(Tile.Type.DIRT, "_"),   // Floor (changed from 'H' to '.')
             Pair(Tile.Type.ENTRY, "P"),   // Entry
             Pair(Tile.Type.EXIT, "P")    // Exit
         )
@@ -81,7 +81,7 @@ class Printer {
             // Build color map based on gradient distances
             for (node in gradient) {
                 val tile = board[node.position]
-                val color = if (tile!!.type == Tile.Type.FLOOR) {
+                val color = if (tile!!.type == Tile.Type.DIRT) {
                     val r = 255 - (node.distance * colorReduction)
                     "\u001B[38;2;${r};${r};${r}m"
                 } else {
@@ -128,7 +128,7 @@ class Printer {
 
                 for (tile in board.tiles[row]) {
                     val color = tileColors[tile.type]!!
-                    print("${color}${tile.type.value}\u001B[0m\t")
+                    print("${color}${tile.type}\u001B[0m\t")
                 }
                 println()
             }

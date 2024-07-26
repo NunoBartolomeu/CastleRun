@@ -24,8 +24,8 @@ data class Board(val tiles: Array<Array<Tile>>, val items: Any? = null) {
     private fun isValidTile(pos: Position, ignoreWalls: Boolean = false): Boolean {
         val tile = this[pos]
         if (tile == null || tile.type == Tile.Type.VOID) return false
-        if (tile.type == Tile.Type.WALL && !ignoreWalls) return false
-        if (tile.type == Tile.Type.WALL && isWallNextToVoid(pos)) return false
+        if (tile.type == Tile.Type.ROCK && !ignoreWalls) return false
+        if (tile.type == Tile.Type.ROCK && isWallNextToVoid(pos)) return false
         return true
     }
 
